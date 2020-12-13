@@ -64,13 +64,15 @@ export default function Authorization() {
             userName: login,
             password: password,
         }
-
         axios.post(BASE_URL + SIGN_IN, data)
             .then(resp => {
-                console.log(resp.data.accessToken)
                 setAccessToken(resp.data.accessToken)
                 setLoading(false)
                 history.push(`/user=${resp.data.userId}/info`)
+            })
+            .catch(error=>{
+                if (error.response.status === 401) handleOpen("Пользователь с заданными логином и паролем не найден")
+                if (error.response.status === 500) handleOpen("Ошибка сервера")
             })
     }
 

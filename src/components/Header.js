@@ -62,6 +62,7 @@ export default function Header({titles, titleKey, setTitleKey}) {
                 url: item.url,
                 className: classes.regularText
             })
+            return a
         })
         a[0].className = classes.setText
         setTitle(a)

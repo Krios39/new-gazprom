@@ -107,14 +107,15 @@ export default function RequestList({data, searchPanel, roles, applicationDate, 
 
     useEffect(() => {
         let a = []
-        requests.map((reques) => {
+        requests.map((request) => {
             const c = []
-            c.push(reques.system)
-            if (roles) c.push(reques.role)
-            if (applicationDate) c.push(reques.date1)
-            c.push(reques.applicationDate)
-            if (status) c.push(reques.status)
+            c.push(request.system)
+            if (roles) c.push(request.role)
+            if (applicationDate) c.push(request.date1)
+            c.push(request.applicationDate)
+            if (status) c.push(request.status)
             a.push(c)
+            return a
         })
         setNewRequest(a)
     }, [requests])

@@ -210,10 +210,8 @@ export default function CreateRequest() {
     const [selectedWorkers, setSelectedWorkers] = useState([])
 
     const [dialogStep, setDialogStep] = useState(0)
-
     const [search, setSearch] = useState("")
-
-
+    const {userId} = useParams()
     const history = useHistory()
 
     useEffect(() => {
@@ -269,7 +267,7 @@ export default function CreateRequest() {
         }
     }
 
-    const {userId} = useParams()
+
 
     const sendRequest = () => {
         setLoading(true)
@@ -282,13 +280,13 @@ export default function CreateRequest() {
 
     const dialogStepChange = (step) => {
         setDialogStep(prevState => prevState + step)
-
     }
 
     const getSelectedWorkers = () => {
         let a = []
         workers.map((worker) => {
-            if (selectedWorkers.indexOf(worker.id) > -1) a.push(worker.name)
+            if (selectedWorkers.indexOf(worker.id) > -1)  a.push(worker.name)
+            return a
         })
         return a
     }
