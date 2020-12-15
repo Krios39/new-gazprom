@@ -190,7 +190,6 @@ const useStyles = makeStyles((theme) => ({
         alignItems: "flex-start",
         maxHeight: 250
     },
-
 }));
 
 export default function CreateRequest() {
@@ -266,8 +265,6 @@ export default function CreateRequest() {
             sendRequest()
         }
     }
-
-
 
     const sendRequest = () => {
         setLoading(true)
@@ -361,7 +358,7 @@ export default function CreateRequest() {
             <Dialog
                 open={systemDialogOpen}
                 onClose={() => setSystemDialogOpen(false)}>
-                <DialogTitle>{"Выберите информационную систему"}</DialogTitle>
+                <DialogTitle>{dialogStep===0? "Выберите информационную систему":"    Выберите роли    "}</DialogTitle>
                 <DialogContent className={classes.systems}>
                     {dialogStep === 0 && systems.map((system, key) =>
                         <FormControlLabel
