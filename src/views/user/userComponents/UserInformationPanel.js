@@ -43,7 +43,7 @@ export default function UserInformationPanel({full}) {
                 "Authorization": "Bearer " + accessToken
             },
             params: {
-                id: params.userId
+                userId: params.userId
             }
         }
         axios.get(BASE_URL + USER_INFORMATION, request)
