@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import {Box, Typography} from "@material-ui/core";
-import {useParams} from "react-router";
+import {useHistory, useParams} from "react-router";
 import {BASE_URL, USER_INFORMATION} from "../../../constants/Urls";
 import axios from "axios"
 import {accessTokenContext} from "../../../App";
@@ -31,6 +31,8 @@ const useStyles = makeStyles(() => ({
 export default function UserInformationPanel({full}) {
     const classes = useStyles()
 
+    const history = useHistory()
+
     const [userInfo, setUserInfo] = useState({})
 
     const {accessToken} = useContext(accessTokenContext)
@@ -51,16 +53,16 @@ export default function UserInformationPanel({full}) {
                 setUserInfo(response.data)
             })
             .catch(e => {
-                console.log(e)
+                if (e.response.status === 401) history.push('/authorization')
             })
     }, [accessToken, params.userId])
 
     return (
         <Box mx={2} className={classes.main}>
-            <Typography className={classes.mainText}>{clsx([userInfo.name,userInfo.middleName,userInfo.lastName])}</Typography>
+            <Typography className={classes.mainText}>{clsx([userInfo.lastName,userInfo.name,userInfo.middleName])}</Typography>
             {full &&
             <Box>
-                <Typography className={classes.text}>Должность: ФФФФФ</Typography>
+                {/*<Typography className={classes.text}>Должность: ФФФФФ</Typography>*/}
                 <Typography className={classes.text}>Подразделение: {userInfo.department}</Typography>
                 <Typography className={classes.text}>Почта: {userInfo.email}</Typography>
             </Box>

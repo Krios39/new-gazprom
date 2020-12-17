@@ -49,6 +49,12 @@ const useStyles = makeStyles(() => ({
 export default function GazpromSearchPanel() {
     const classes = useStyles()
 
+    const [fillingDateStart,setFillingDateStart] = useState(new Date())
+    const [fillingDateEnd,setFillingDateEnd] = useState(new Date())
+    const [expiryDateStart,setExpiryDateStart] = useState(new Date())
+    const [expiryDateEnd,setExpiryDateEnd] = useState(new Date())
+
+
     const [state, setState] = useState({
         gilad: true,
         jason: false,
@@ -106,14 +112,14 @@ export default function GazpromSearchPanel() {
 
             <Box>
                 <Typography className={classes.labelText}>Дата подачи</Typography>
-                <GazpromDatePicker className={classes.margin} size={"small"}/>
-                <GazpromDatePicker className={classes.margin} size={"small"}/>
+                <GazpromDatePicker className={classes.margin} size={"small"} value={fillingDateStart} onChange={setFillingDateStart}/>
+                <GazpromDatePicker className={classes.margin} size={"small"} value={fillingDateEnd} onChange={setFillingDateEnd}/>
             </Box>
 
             <Box>
                 <Typography className={classes.labelText}>Дата выдачи</Typography>
-                <GazpromDatePicker className={classes.margin} size={"small"}/>
-                <GazpromDatePicker className={classes.margin} size={"small"}/>
+                <GazpromDatePicker className={classes.margin} size={"small"} value={expiryDateStart} onChange={setExpiryDateStart}/>
+                <GazpromDatePicker className={classes.margin} size={"small"} value={expiryDateEnd} onChange={setExpiryDateEnd}/>
             </Box>
             <GazpromButton
                 fullWidth

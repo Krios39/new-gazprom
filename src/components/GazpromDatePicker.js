@@ -48,7 +48,7 @@ const materialTheme = createMuiTheme({
     },
 });
 
-export default function GazpromDatePicker({className, value, onChange, size}) {
+export default function GazpromDatePicker({className, value, onChange, size,minDate}) {
 
     const [datePickerSizeClass, setDatePickerSizeClass] = useState(BigGazpromInputBase)
 
@@ -67,7 +67,7 @@ export default function GazpromDatePicker({className, value, onChange, size}) {
                     variant="inline"
                     value={value}
                     onChange={date => onChange(date)}
-                    minDate={new Date()}
+                    minDate={minDate}
                     format="dd.MM.yyyy"
                     TextFieldComponent={datePickerSizeClass}
                 />

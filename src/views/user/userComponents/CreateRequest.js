@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {
     Box, Container,
     Dialog, DialogTitle, DialogContent, DialogActions,
@@ -12,125 +12,9 @@ import clsx from "clsx";
 import {useHistory, useParams} from "react-router";
 import withStyles from "@material-ui/core/styles/withStyles";
 import {GazpromTextField} from "../../../components/GazpromTextField";
-
-
-const data = [
-    {
-        system: "Информационная система 1",
-        roles: ["роль 11", "роль 12", "роль 13", "роль 14", "роль 15"]
-    },
-    {
-        system: "Информационная система 2",
-        roles: ["роль 21", "роль 22", "роль 23", "роль 24", "роль 25"]
-    },
-    {
-        system: "Информационная система 3",
-        roles: ["роль 31", "роль 32", "роль 33", "роль 34", "роль 35"]
-    },
-    {
-        system: "Информационная система 4",
-        roles: ["роль 41", "роль 42", "роль 43", "роль 44", "роль 45"]
-    },
-    {
-        system: "Информационная система 5",
-        roles: ["роль 51", "роль 52", "роль 53", "роль 54", "роль 55"]
-    },
-    {
-        system: "Информационная система 6",
-        roles: ["роль 61", "роль 62", "роль 63", "роль 64", "роль 65"]
-    },
-    {
-        system: "Информационная система 7",
-        roles: ["роль 71", "роль 72", "роль 73", "роль 74", "роль 75"]
-    },
-    {
-        system: "Информационная система 8",
-        roles: ["роль 81", "роль 82", "роль 83", "роль 84", "роль 85"]
-    },
-    {
-        system: "Информационная система 9",
-        roles: ["роль 91", "роль 92", "роль 93", "роль 94", "роль 95"]
-    },
-    {
-        system: "Информационная система 1",
-        roles: ["роль 11", "роль 12", "роль 13", "роль 14", "роль 15"]
-    },
-    {
-        system: "Информационная система 2",
-        roles: ["роль 21", "роль 22", "роль 23", "роль 24", "роль 25"]
-    },
-    {
-        system: "Информационная система 3",
-        roles: ["роль 31", "роль 32", "роль 33", "роль 34", "роль 35"]
-    },
-    {
-        system: "Информационная система 4",
-        roles: ["роль 41", "роль 42", "роль 43", "роль 44", "роль 45"]
-    },
-    {
-        system: "Информационная система 5",
-        roles: ["роль 51", "роль 52", "роль 53", "роль 54", "роль 55"]
-    },
-    {
-        system: "Информационная система 6",
-        roles: ["роль 61", "роль 62", "роль 63", "роль 64", "роль 65"]
-    },
-    {
-        system: "Информационная система 7",
-        roles: ["роль 71", "роль 72", "роль 73", "роль 74", "роль 75"]
-    },
-    {
-        system: "Информационная система 8",
-        roles: ["роль 81", "роль 82", "роль 83", "роль 84", "роль 85"]
-    },
-    {
-        system: "Информационная система 9",
-        roles: ["роль 91", "роль 92", "роль 93", "роль 94", "роль 95"]
-    },
-    {
-        system: "Информационная система 1",
-        roles: ["роль 11", "роль 12", "роль 13", "роль 14", "роль 15"]
-    },
-    {
-        system: "Информационная система 2",
-        roles: ["роль 21", "роль 22", "роль 23", "роль 24", "роль 25"]
-    },
-    {
-        system: "Информационная система 3",
-        roles: ["роль 31", "роль 32", "роль 33", "роль 34", "роль 35"]
-    },
-    {
-        system: "Информационная система 4",
-        roles: ["роль 41", "роль 42", "роль 43", "роль 44", "роль 45"]
-    },
-    {
-        system: "Информационная система 5",
-        roles: ["роль 51", "роль 52", "роль 53", "роль 54", "роль 55"]
-    },
-    {
-        system: "Информационная система 6",
-        roles: ["роль 61", "роль 62", "роль 63", "роль 64", "роль 65"]
-    },
-    {
-        system: "Информационная система 7",
-        roles: ["роль 71", "роль 72", "роль 73", "роль 74", "роль 75"]
-    },
-    {
-        system: "Информационная система 8",
-        roles: ["роль 81", "роль 82", "роль 83", "роль 84", "роль 85"]
-    },
-    {
-        system: "Информационная система 9",
-        roles: ["роль 91", "роль 92", "роль 93", "роль 94", "роль 95"]
-    },
-]
-
-const work = [
-    {name: "work1", id: 1}, {name: "work2", id: 2}, {name: "work3", id: 3}, {name: "work4", id: 4}, {
-        name: "work5",
-        id: 5
-    }, {name: "work6", id: 6}, {name: "work7", id: 7}, {name: "work8", id: 8}, {name: "work9", id: 9},
-]
+import axios from "axios"
+import {ADD_REQUEST, ALL_SYSTEMS, ALL_USERS, BASE_URL} from "../../../constants/Urls";
+import {accessTokenContext} from "../../../App";
 
 const GazpromRadio = withStyles({
     root: {
@@ -164,7 +48,6 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-
     },
     margin: {
         width: "90%"
@@ -202,8 +85,8 @@ export default function CreateRequest() {
 
     const [systems, setSystems] = useState([])
     const [selectedSystem, setSelectedSystem] = useState(0)
-    const [roles, setRoles] = useState([])
-    const [selectedRoles, setSelectedRoles] = useState([])
+    const [privileges, setPrivileges] = useState([])
+    const [selectedPrivileges, setSelectedPrivileges] = useState([])
     const [workers, setWorkers] = useState([])
     const [filterWorkers, setFilterWorkers] = useState([])
     const [selectedWorkers, setSelectedWorkers] = useState([])
@@ -213,15 +96,41 @@ export default function CreateRequest() {
     const {userId} = useParams()
     const history = useHistory()
 
+    const {accessToken} = useContext(accessTokenContext)
+
     useEffect(() => {
-        setSystems(data)
-        setWorkers(work)
+        const request = {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + accessToken
+            }
+        }
+
+        axios.get(BASE_URL + ALL_SYSTEMS, request)
+            .then(resp => {
+                setSystems(resp.data)
+            })
+            .catch(error => {
+                if (error.response.status === 401) history.push('/authorization')
+                // if (error.response.status === 500) handleOpen("Ошибка сервера")
+            })
+
+        axios.get(BASE_URL + ALL_USERS, request)
+            .then(resp => {
+                workerSelfException(resp.data)
+            })
+            .catch(error => {
+                if (error.response.status === 401) history.push('/authorization')
+                // if (error.response.status === 500) handleOpen("Ошибка сервера")
+            })
     }, [])
 
     useEffect(() => {
-        setSelectedSystem(0)
-        if (systems.length !== 0) setRoles(systems[0].roles)
-        setSelectedRoles([])
+        if (systems.length !== 0) {
+            setSelectedSystem(systems[0].id)
+            setPrivileges(systems[0].privileges)
+        }
+        setSelectedPrivileges([])
     }, [systems])
 
     useEffect(() => {
@@ -238,26 +147,39 @@ export default function CreateRequest() {
         } else setFilterWorkers(workers)
     }, [search, workers])
 
-    const systemChange = (key) => {
-        setSelectedSystem(key)
-        if (systems.length !== 0) setRoles(systems[key].roles)
-        setSelectedRoles([])
+    const workerSelfException = (data) => {
+        let a = [...data]
+        data.map(user => {
+            if (user.userId.toString() === userId) {
+                a.splice(a.indexOf(user), 1)
+            }
+            return a
+        })
+        setWorkers(a)
     }
 
-    const rolesChange = (key) => {
-        if (selectedRoles.indexOf(roles[key]) !== -1) {
-            let a = [...selectedRoles]
-            a.splice(selectedRoles.indexOf(roles[key]), 1)
-            setSelectedRoles(a)
-        } else setSelectedRoles(prevState => [...prevState, roles[key]])
+    const systemChange = (id) => {
+        console.log(systems)
+        setSelectedSystem(id)
+        if (systems.length !== 0) setPrivileges(systems[systems.indexOf(systems.find(system => system.id === id))].privileges)
+        setSelectedPrivileges([])
     }
 
-    const workerSelectChange = (id) => {
-        if (selectedWorkers.indexOf(id) !== -1) {
+    const privilegeChange = (key) => {
+        if (selectedPrivileges.indexOf(privileges[key].id) !== -1) {
+            let a = [...selectedPrivileges]
+            a.splice(selectedPrivileges.indexOf(privileges[key].id), 1)
+            setSelectedPrivileges(a)
+        } else setSelectedPrivileges(prevState => [...prevState, privileges[key].id])
+    }
+
+    const workerSelectChange = (worker) => {
+        if (selectedWorkers.indexOf(worker.userId) !== -1) {
             let a = [...selectedWorkers]
-            a.splice(selectedWorkers.indexOf(id), 1)
+            a.splice(selectedWorkers.indexOf(worker.userId), 1)
             setSelectedWorkers(a)
-        } else setSelectedWorkers(prevState => [...prevState, id])
+        } else setSelectedWorkers(prevState => [...prevState, worker.userId])
+        console.log(worker)
     }
 
     const handleKeyPress = (event) => {
@@ -268,11 +190,26 @@ export default function CreateRequest() {
 
     const sendRequest = () => {
         setLoading(true)
-        setTimeout(() => {
-            setLoading(false)
-            history.push(`/user=${userId}/info`)
-        }, 3000)
-
+        const request = {
+            usersId: [...selectedWorkers, Number(userId)],
+            privilegesId: selectedPrivileges,
+            idSystem: selectedSystem
+        }
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + accessToken
+        }
+        axios.post(BASE_URL + ADD_REQUEST, request, {
+            headers: headers
+        })
+            .then(() => {
+                setLoading(false)
+                history.push(`/user=${userId}/info`)
+            })
+            .catch(e => {
+                if (e.response.status === 401) history.push('/authorization')
+                setLoading(false)
+            })
     }
 
     const dialogStepChange = (step) => {
@@ -282,10 +219,19 @@ export default function CreateRequest() {
     const getSelectedWorkers = () => {
         let a = []
         workers.map((worker) => {
-            if (selectedWorkers.indexOf(worker.id) > -1)  a.push(worker.name)
+            if (selectedWorkers.indexOf(worker.userId) > -1) a.push(clsx(worker.lastName, worker.name))
             return a
         })
-        return a
+        return a.join(", ")
+    }
+
+    const getPrivilegesString = () => {
+        let a = []
+        privileges.map(privilege => {
+            if (selectedPrivileges.indexOf(privilege.id) > -1) a.push(clsx(privilege.title))
+            return a
+        })
+        return a.join(", ")
     }
 
     return (
@@ -300,7 +246,7 @@ export default function CreateRequest() {
                                     variant="h5">
                             Создание заявки
                         </Typography>
-                        {selectedRoles.length === 0 &&
+                        {selectedPrivileges.length === 0 &&
                         <Box className={classes.formElement}>
                             <GazpromButton
                                 fullWidth
@@ -314,14 +260,14 @@ export default function CreateRequest() {
                         </Box>
                         }
                         {
-                            selectedRoles.length > 0 &&
+                            selectedPrivileges.length > 0 &&
                             <Box className={clsx([classes.paper, classes.margin])}>
                                 <Box className={clsx(classes.regularText, classes.margin)}>
                                     <Typography className={clsx(classes.formElement)}>
-                                        {systems[selectedSystem].system}
+                                        {systems[systems.indexOf(systems.find(system => system.id === selectedSystem))].title}
                                     </Typography>
                                     <Typography className={clsx(classes.formElement, classes.regularText)}>
-                                        Роли: {selectedRoles.join(", ")}
+                                        Роли: {getPrivilegesString()}
                                     </Typography>
                                 </Box>
                                 <GazpromButton
@@ -334,7 +280,7 @@ export default function CreateRequest() {
                                 {selectedWorkers.length !== 0 &&
                                 <Box className={clsx(classes.regularText, classes.margin)}>
                                     <Typography className={clsx(classes.formElement, classes.regularText)}>
-                                        Сотрудники: {getSelectedWorkers().join(", ")}
+                                        Сотрудники: {getSelectedWorkers()}
                                     </Typography>
                                 </Box>
                                 }
@@ -348,7 +294,6 @@ export default function CreateRequest() {
                                     Отправить заявку
                                     {loading && <CircularProgress size={28} className={classes.buttonProgress}/>}
                                 </GazpromButton>
-
                             </Box>
                         }
                     </Box>
@@ -358,21 +303,23 @@ export default function CreateRequest() {
             <Dialog
                 open={systemDialogOpen}
                 onClose={() => setSystemDialogOpen(false)}>
-                <DialogTitle>{dialogStep===0? "Выберите информационную систему":"    Выберите роли    "}</DialogTitle>
+                <DialogTitle>{dialogStep === 0 ? "Выберите информационную систему" : "    Выберите роли    "}</DialogTitle>
                 <DialogContent className={classes.systems}>
                     {dialogStep === 0 && systems.map((system, key) =>
                         <FormControlLabel
-                            control={<GazpromRadio className={classes.check} checked={(key === selectedSystem)}
-                                                   onChange={() => systemChange(key)}/>}
-                            label={<Typography className={classes.littleText}>{system.system}</Typography>}
+                            key={key}
+                            control={<GazpromRadio className={classes.check} checked={(system.id === selectedSystem)}
+                                                   onChange={() => systemChange(system.id)}/>}
+                            label={<Typography className={classes.littleText}>{system.title}</Typography>}
                         />
                     )}
-                    {dialogStep !== 0 && roles.map((role, key) =>
+                    {dialogStep !== 0 && privileges.map((privilege, key) =>
                         <FormControlLabel
+                            key={key}
                             control={<GazpromCheckbox className={classes.check}
-                                                      checked={(selectedRoles.indexOf(role) > -1)}
-                                                      onChange={() => rolesChange(key)}/>}
-                            label={<Typography className={classes.littleText}>{role}</Typography>}
+                                                      checked={(selectedPrivileges.indexOf(privilege.id) > -1)}
+                                                      onChange={() => privilegeChange(key)}/>}
+                            label={<Typography className={classes.littleText}>{privilege.title}</Typography>}
                         />
                     )
                     }
@@ -409,13 +356,13 @@ export default function CreateRequest() {
                 <DialogContent className={classes.systems}>
                     <List>
                         {filterWorkers.map((worker, key) =>
-                            <ListItem key={key} dense button onClick={() => workerSelectChange(worker.id)}>
+                            <ListItem key={key} dense button onClick={() => workerSelectChange(worker)}>
                                 <ListItemIcon>
                                     <GazpromCheckbox
-                                        checked={(selectedWorkers.indexOf(worker.id) > -1)}
+                                        checked={(selectedWorkers.indexOf(worker.userId) > -1)}
                                     />
                                 </ListItemIcon>
-                                <ListItemText primary={worker.name}/>
+                                <ListItemText primary={clsx(worker.lastName, worker.name,worker.middleName)}/>
                             </ListItem>
                         )
                         }

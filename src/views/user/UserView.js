@@ -32,7 +32,6 @@ export default function UserView() {
         <Container>
             <Box>
                 <Header titles={titles} titleKey={titleKey} setTitleKey={setTitleKey}/>
-
                 <Switch>
                     <Route exact path={`${path}/info`}>
                         <UserInformation/>
