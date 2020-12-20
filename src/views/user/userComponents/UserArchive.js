@@ -38,7 +38,6 @@ export default function UserArchive() {
         })
             .then((resp) => {
                 setData(resp.data)
-
             })
             .catch(e => {
                 if (e.response.status === 401) history.push('/authorization')

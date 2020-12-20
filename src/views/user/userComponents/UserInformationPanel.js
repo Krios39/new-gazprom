@@ -62,7 +62,6 @@ export default function UserInformationPanel({full}) {
             <Typography className={classes.mainText}>{clsx([userInfo.lastName,userInfo.name,userInfo.middleName])}</Typography>
             {full &&
             <Box>
-                {/*<Typography className={classes.text}>Должность: ФФФФФ</Typography>*/}
                 <Typography className={classes.text}>Подразделение: {userInfo.department}</Typography>
                 <Typography className={classes.text}>Почта: {userInfo.email}</Typography>
             </Box>

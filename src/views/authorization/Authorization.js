@@ -8,7 +8,7 @@ import {GazpromTextField} from "../../components/GazpromTextField";
 import GazpromDialog from "../../components/GazpromDialog";
 import axios from "axios"
 import {BASE_URL, SIGN_IN} from "../../constants/Urls";
-import {accessTokenContext} from "../../App";
+import {accessTokenContext, roleContext} from "../../App";
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -27,6 +27,8 @@ const useStyles = makeStyles((theme) => ({
         alignItems: "center",
     },
     avatar: {
+        marginTop:theme.spacing(3),
+        marginBottom:theme.spacing(3),
         width: theme.spacing(10),
         height: theme.spacing(10),
     },
@@ -54,6 +56,10 @@ export default function Authorization() {
     const [textFieldError, setTextFieldError] = useState(false)
 
     const {setAccessToken} = useContext(accessTokenContext)
+    const {setRole} = useContext(roleContext)
+    // useEffect(()=>{
+    //  setAccessToken("")
+    // })
 
     useEffect(() => {
         setTextFieldError(false)
@@ -68,7 +74,11 @@ export default function Authorization() {
             .then(resp => {
                 setAccessToken(resp.data.accessToken)
                 setLoading(false)
-                history.push(`/user=${resp.data.userId}/info`)
+                    // history.push(`/user=${resp.data.userId}/info`)
+                if(resp.data.role==="ROLE_SUPER_ADMIN"||resp.data.role==="ROLE_OWNER"||resp.data.role==="ROLE_PRIMARY_ADMIN"||resp.data.role==="ROLE_BACKUP_ADMIN") history.push(`/admin=${resp.data.userId}/info/-1`)
+                else history.push(`/user=${resp.data.userId}/info`)
+                if (resp.data.role==="ROLE_OWNER") setRole("owner")
+                if (resp.data.role==="ROLE_PRIMARY_ADMIN"||resp.data.role==="ROLE_BACKUP_ADMIN") setRole("admin")
             })
             .catch(error=>{
                 if (error.response.status === 401) handleOpen("Пользователь с заданными логином и паролем не найден")

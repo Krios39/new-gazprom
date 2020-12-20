@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Header from "../../components/Header";
 import {Box, Container} from "@material-ui/core";
 import CreateRequest from "./userComponents/CreateRequest";
@@ -7,7 +7,6 @@ import UserArchive from "./userComponents/UserArchive";
 import {Route} from "react-router-dom";
 import {Switch} from "react-router-dom";
 import UserInformation from "./userComponents/UserInformation";
-
 
 const titles = [
     {
@@ -27,6 +26,7 @@ export default function UserView() {
 
     const [titleKey, setTitleKey] = useState(0)
     const {path} = useRouteMatch()
+
 
     return (
         <Container>

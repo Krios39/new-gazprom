@@ -4,6 +4,9 @@ import {makeStyles} from "@material-ui/core/styles";
 import withStyles from "@material-ui/core/styles/withStyles";
 import clsx from "clsx";
 import Tooltip from "@material-ui/core/Tooltip";
+import {useHistory, useParams} from "react-router-dom";
+import Request from "../views/admin/adminComponents/Request";
+
 
 const GazpromInput = withStyles((theme) => ({
     root: {
@@ -94,7 +97,7 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-export default function RequestList({data, searchPanel, privileges, fillingDate, status}) {
+export default function RequestList({data, searchPanel, privileges, fillingDate, status, admin}) {
     const classes = useStyles()
     const [selectSortCategory, setSelectSortCategory] = useState(0)
     const [sortOrder, setSortOrder] = useState(10)
@@ -105,25 +108,43 @@ export default function RequestList({data, searchPanel, privileges, fillingDate,
 
     const [newRequest, setNewRequest] = useState([])
 
+    const [requestOpen, setRequestOpen] = useState(false)
+
+    const {requestId} = useParams()
+
+    const history = useHistory()
+
+    useEffect(() => {
+        const adminCheck = () => {
+            if (admin) if (requestId !== "-1") setRequestOpen(true)
+            else setRequestOpen(false)
+        }
+        adminCheck()
+    }, [admin, requestId])
+
     useEffect(() => {
         if (searchPanel) setCssClass(classes.requestBox)
     }, [classes.requestBox, searchPanel])
 
     useEffect(() => {
         let a = []
-        requests.map((request) => {
-            const c = []
-            c.push(request.system)
-            if (privileges) c.push(request.privileges)
-            if (fillingDate) if (request.fillingDate) c.push(dateToString(request.fillingDate))
-            else c.push(dateToString("Бессрочно"))
-            c.push(dateToString(request.expiryDate))
-            if (status) c.push(getStatus(request.status))
-            a.push(c)
-            return a
-        })
+        const makeNewRequest = () => {
+            requests.map((request) => {
+                const c = []
+                c.push(request.idRequest)
+                c.push(request.system)
+                if (privileges) c.push(request.privileges)
+                c.push(dateToString(request.fillingDate))
+                if (fillingDate) if (request.fillingDate) c.push(dateToString(request.expiryDate))
+                else c.push(dateToString("Бессрочно"))
+                if (status) c.push(getStatus(request.status))
+                a.push(c)
+                return a
+            })
+        }
+        makeNewRequest()
         setNewRequest(a)
-    }, [requests])
+    }, [fillingDate, privileges, requests, status])
 
     useEffect(() => {
         setRequests(data)
@@ -131,30 +152,36 @@ export default function RequestList({data, searchPanel, privileges, fillingDate,
 
     useEffect(() => {
         let a = []
-        a.push("Информационная система")
-        if (privileges) a.push("Привелегии")
-        if (fillingDate) a.push("Дата подачи")
-        a.push("Дата выдачи")
-        if (status) a.push("Статус")
+        const makeTableTitle = () => {
+            a.push("Информационная система")
+            if (privileges) a.push("Привелегии")
+            if (fillingDate) a.push("Дата подачи")
+            a.push("Дата выдачи")
+            if (status) a.push("Статус")
+        }
+        makeTableTitle()
         setSortCategories(a)
-    }, [])
+    }, [fillingDate, privileges, status])
 
 
     useEffect(() => {
-        const arr = [...newRequest]
-        const categoryName = sortCategories[selectSortCategory]
+        const tableSort = () => {
+            const arr = [...newRequest]
+            const categoryName = sortCategories[selectSortCategory]
 
-        if (categoryName === "Дата выдачи" || categoryName === "Дата подачи") arr.sort((a, b) => {
-                const parts1 = a[selectSortCategory].split('.');
-                const parts2 = b[selectSortCategory].split('.');
-                const date1 = new Date(parts1[2], parts1[1] - 1, parts1[0]);
-                const date2 = new Date(parts2[2], parts2[1] - 1, parts2[0]);
-                return date1 > date2 ? 1 : -1
-            }
-        )
-        else arr.sort((a, b) => a[selectSortCategory] > b[selectSortCategory] ? 1 : -1)
-        if (arr.length !== 0) sortOrder === 10 ? setNewRequest(arr) : setNewRequest(arr.reverse())
-    }, [selectSortCategory, sortOrder])
+            if (categoryName === "Дата выдачи" || categoryName === "Дата подачи") arr.sort((a, b) => {
+                    const parts1 = a[selectSortCategory].split('.');
+                    const parts2 = b[selectSortCategory].split('.');
+                    const date1 = new Date(parts1[2], parts1[1] - 1, parts1[0]);
+                    const date2 = new Date(parts2[2], parts2[1] - 1, parts2[0]);
+                    return date1 > date2 ? 1 : -1
+                }
+            )
+            else arr.sort((a, b) => a[selectSortCategory] > b[selectSortCategory] ? 1 : -1)
+            if (arr.length !== 0) sortOrder === 10 ? setNewRequest(arr) : setNewRequest(arr.reverse())
+        }
+        tableSort()
+    }, [])
 
     const sortCategoryHandleChange = (event) => {
         setSelectSortCategory(event.target.value)
@@ -167,19 +194,18 @@ export default function RequestList({data, searchPanel, privileges, fillingDate,
     const dateToString = date => {
         if (date.year === 1) return "-"
         const day = date.day
-        const month = date.month
+        const month = date.month + 1
         const year = date.year + 1900
         return `${day}.${month}.${year}`
     }
 
     const getStatus = status => {
-        console.log(status)
         let a = ""
         switch (status) {
             case "STATUS_SHIPPED":
                 a = "Отправлена"
                 break
-            case "STATUS_ENABLED":
+            case "STATUS_ENABLE":
                 a = "Активна"
                 break
             case "STATUS_DISABLED":
@@ -193,6 +219,12 @@ export default function RequestList({data, searchPanel, privileges, fillingDate,
                 break
         }
         return a
+    }
+
+    const onRequestClick = (requestId) => {
+        if (admin) {
+            history.push(`${requestId}`)
+        }
     }
 
     return (
@@ -229,17 +261,25 @@ export default function RequestList({data, searchPanel, privileges, fillingDate,
                     </FormControl>
                 </Box>
             </Box>
+
             <Box className={classes.table}>
                 <Grid container
                       className={clsx(classes.tableCell, classes.borderLabel)}
                       direction="row"
                       justify="space-around"
                       alignItems="center"
+                      spacing={2}
                 >
                     {sortCategories.map((category, key) =>
-                        <Grid key={key} item zeroMinWidth>
-                            <Typography noWrap
-                                        className={clsx(classes.date, classes.listLabel)}>
+                        <Grid key={key}
+                              item
+                              xs
+                              zeroMinWidth container justify="center"
+                        >
+                            <Typography
+                                component={'span'}
+                                noWrap
+                                className={clsx(classes.date, classes.listLabel)}>
                                 <Box
                                     component="div"
                                     textOverflow="ellipsis"
@@ -261,31 +301,41 @@ export default function RequestList({data, searchPanel, privileges, fillingDate,
                           justify="space-around"
                           alignItems="center"
                           spacing={2}
+                          onClick={() => onRequestClick(cellItem[0])}
                     >
                         {cellItem.map((item1, key1) =>
+                            (key1 !== 0) &&
                             <Grid key={key1}
-                                  item
                                   wrap="nowrap"
+                                  item
+                                  xs
                                   zeroMinWidth
+                                  container justify="center"
                             >
-
                                 {(Array.isArray(item1)) ?
-                                    item1.map((privilege, key2) =>
-                                        <Tooltip key={key2} title={privilege.title}>
-                                            <Typography noWrap className={classes.date}>
-                                                <Box
-                                                    component="div"
-                                                    textOverflow="ellipsis"
-                                                    overflow="hidden"
-                                                >
-                                                    {privilege.title}
-                                                </Box>
-                                            </Typography>
-                                        </Tooltip>
-                                    )
+                                    <Grid container direction="column" alignItems="center">
+                                        {item1.map((privilege, key2) =>
+                                            <Grid key={key2}
+                                                  item
+                                                  xs
+                                                  zeroMinWidth>
+                                                <Tooltip key={key2} title={privilege.title}>
+                                                    <Typography component={'span'} noWrap className={classes.date}>
+                                                        <Box
+                                                            component="div"
+                                                            textOverflow="ellipsis"
+                                                            overflow="hidden"
+                                                        >
+                                                            {privilege.title}
+                                                        </Box>
+                                                    </Typography>
+                                                </Tooltip>
+                                            </Grid>
+                                        )}
+                                    </Grid>
                                     :
                                     <Tooltip title={item1}>
-                                        <Typography noWrap className={classes.date}>
+                                        <Typography component={'span'} noWrap className={classes.date}>
                                             <Box
                                                 component="div"
                                                 textOverflow="ellipsis"
@@ -297,10 +347,11 @@ export default function RequestList({data, searchPanel, privileges, fillingDate,
                                     </Tooltip>}
                             </Grid>
                         )}
-
                     </Grid>
                 )}
             </Box>
+
+            <Request open={requestOpen} onClose={() => onRequestClick(-1)}/>
         </Box>
     )
 }

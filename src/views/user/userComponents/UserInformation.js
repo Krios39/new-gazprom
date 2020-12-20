@@ -5,7 +5,7 @@ import React, {useContext, useEffect, useState} from "react";
 import {accessTokenContext} from "../../../App";
 import axios from "axios"
 import {ACTIVE_REQUESTS, BASE_URL} from "../../../constants/Urls";
-import {useParams} from "react-router";
+import {useHistory, useParams} from "react-router";
 
 export default function UserInformation() {
 
@@ -13,6 +13,8 @@ export default function UserInformation() {
     const params = useParams();
 
     const [data,setData] = useState([])
+
+    const history = useHistory()
 
     useEffect(()=>{
         axios.get(BASE_URL+ACTIVE_REQUESTS,{
@@ -26,13 +28,16 @@ export default function UserInformation() {
             .then(resp =>{
                 setData(resp.data)
             })
+            .catch(e => {
+                if (e.response.status === 401) history.push('/authorization')
+            })
     },[])
 
     return (
         <Box>
             <UserInformationPanel full={true}/>
             <Box mx={2}>
-                <RequestList data={data} privileges={true}/>
+                <RequestList data={data} privileges={true} fillingDate={true}/>
             </Box>
         </Box>
     )

@@ -4,7 +4,7 @@ import {
     Dialog, DialogTitle, DialogContent, DialogActions,
     List, ListItem, ListItemIcon, ListItemText,
     Paper, Radio,
-    Typography, FormControlLabel, Checkbox, CircularProgress
+    Typography, FormControlLabel, Checkbox, CircularProgress, Link
 } from "@material-ui/core";
 import {GazpromButton} from "../../../components/GazpromButton";
 import {makeStyles} from "@material-ui/core/styles";
@@ -15,6 +15,7 @@ import {GazpromTextField} from "../../../components/GazpromTextField";
 import axios from "axios"
 import {ADD_REQUEST, ALL_SYSTEMS, ALL_USERS, BASE_URL} from "../../../constants/Urls";
 import {accessTokenContext} from "../../../App";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const GazpromRadio = withStyles({
     root: {
@@ -57,6 +58,7 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: "column",
         alignItems: "flex-start"
     },
+
     titleText: {
         marginTop: theme.spacing(3),
         fontWeight: 600
@@ -73,6 +75,9 @@ const useStyles = makeStyles((theme) => ({
         alignItems: "flex-start",
         maxHeight: 250
     },
+    boldText:{
+        fontWeight: 600
+    }
 }));
 
 export default function CreateRequest() {
@@ -95,6 +100,8 @@ export default function CreateRequest() {
     const [search, setSearch] = useState("")
     const {userId} = useParams()
     const history = useHistory()
+
+    const date = new Date()
 
     const {accessToken} = useContext(accessTokenContext)
 
@@ -121,7 +128,7 @@ export default function CreateRequest() {
             })
             .catch(error => {
                 if (error.response.status === 401) history.push('/authorization')
-                // if (error.response.status === 500) handleOpen("Ошибка сервера")
+                //if (error.response.status === 500) handleOpen("Ошибка сервера")
             })
     }, [])
 
@@ -159,7 +166,6 @@ export default function CreateRequest() {
     }
 
     const systemChange = (id) => {
-        console.log(systems)
         setSelectedSystem(id)
         if (systems.length !== 0) setPrivileges(systems[systems.indexOf(systems.find(system => system.id === id))].privileges)
         setSelectedPrivileges([])
@@ -179,7 +185,6 @@ export default function CreateRequest() {
             a.splice(selectedWorkers.indexOf(worker.userId), 1)
             setSelectedWorkers(a)
         } else setSelectedWorkers(prevState => [...prevState, worker.userId])
-        console.log(worker)
     }
 
     const handleKeyPress = (event) => {
@@ -212,17 +217,13 @@ export default function CreateRequest() {
             })
     }
 
-    const dialogStepChange = (step) => {
+    const dialogStepChange = step => {
         setDialogStep(prevState => prevState + step)
     }
 
-    const getSelectedWorkers = () => {
-        let a = []
-        workers.map((worker) => {
-            if (selectedWorkers.indexOf(worker.userId) > -1) a.push(clsx(worker.lastName, worker.name))
-            return a
-        })
-        return a.join(", ")
+    const dialogOpen = step=>{
+        setDialogStep(step)
+        setSystemDialogOpen(true)
     }
 
     const getPrivilegesString = () => {
@@ -263,11 +264,18 @@ export default function CreateRequest() {
                             selectedPrivileges.length > 0 &&
                             <Box className={clsx([classes.paper, classes.margin])}>
                                 <Box className={clsx(classes.regularText, classes.margin)}>
-                                    <Typography className={clsx(classes.formElement)}>
-                                        {systems[systems.indexOf(systems.find(system => system.id === selectedSystem))].title}
+                                    <Typography className={clsx(classes.formElement, classes.boldText)}>
+                                        <Link color="inherit" onClick={()=>dialogOpen(0)}>
+                                        {systems.find(system => system.id === selectedSystem).title}
+                                        </Link>
                                     </Typography>
-                                    <Typography className={clsx(classes.formElement, classes.regularText)}>
-                                        Роли: {getPrivilegesString()}
+                                    <Typography className={clsx(classes.formElement, classes.boldText)}>
+                                        <Link color="inherit" onClick={()=>dialogOpen(1)}>
+                                        Привилегии: {getPrivilegesString()}
+                                        </Link>
+                                    </Typography>
+                                    <Typography className={clsx(classes.formElement, classes.boldText)}>
+                                        Дата подачи: {`${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`}
                                     </Typography>
                                 </Box>
                                 <GazpromButton
@@ -280,7 +288,9 @@ export default function CreateRequest() {
                                 {selectedWorkers.length !== 0 &&
                                 <Box className={clsx(classes.regularText, classes.margin)}>
                                     <Typography className={clsx(classes.formElement, classes.regularText)}>
-                                        Сотрудники: {getSelectedWorkers()}
+                                        <Link color="inherit" onClick={() => setRoleDialogOpen(true)}>
+                                            Добавленные сотрудники ({selectedWorkers.length})
+                                        </Link>
                                     </Typography>
                                 </Box>
                                 }
@@ -303,7 +313,7 @@ export default function CreateRequest() {
             <Dialog
                 open={systemDialogOpen}
                 onClose={() => setSystemDialogOpen(false)}>
-                <DialogTitle>{dialogStep === 0 ? "Выберите информационную систему" : "    Выберите роли    "}</DialogTitle>
+                <DialogTitle>{dialogStep === 0 ? "Выберите информационную систему" : "Выберите привлегии"}</DialogTitle>
                 <DialogContent className={classes.systems}>
                     {dialogStep === 0 && systems.map((system, key) =>
                         <FormControlLabel
@@ -314,13 +324,16 @@ export default function CreateRequest() {
                         />
                     )}
                     {dialogStep !== 0 && privileges.map((privilege, key) =>
+                        <Tooltip key={key} title={privilege.description}>
                         <FormControlLabel
-                            key={key}
-                            control={<GazpromCheckbox className={classes.check}
+                            control={
+                                <GazpromCheckbox className={classes.check}
                                                       checked={(selectedPrivileges.indexOf(privilege.id) > -1)}
-                                                      onChange={() => privilegeChange(key)}/>}
+                                                      onChange={() => privilegeChange(key)}/>
+                            }
                             label={<Typography className={classes.littleText}>{privilege.title}</Typography>}
                         />
+                        </Tooltip>
                     )
                     }
                 </DialogContent>
