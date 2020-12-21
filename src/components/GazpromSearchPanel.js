@@ -3,7 +3,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import React, {useState} from "react";
 import Box from "@material-ui/core/Box";
 import {Typography} from "@material-ui/core";
-import {SmallGazpromTextField} from "./GazpromTextField";
+import {GazpromTextField, SmallGazpromTextField} from "./GazpromTextField";
 import FormControl from "@material-ui/core/FormControl";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -46,13 +46,13 @@ const useStyles = makeStyles(() => ({
 }))
 
 
-export default function GazpromSearchPanel() {
+export default function GazpromSearchPanel({admin}) {
     const classes = useStyles()
 
-    const [fillingDateStart,setFillingDateStart] = useState(new Date())
-    const [fillingDateEnd,setFillingDateEnd] = useState(new Date())
-    const [expiryDateStart,setExpiryDateStart] = useState(new Date())
-    const [expiryDateEnd,setExpiryDateEnd] = useState(new Date())
+    const [fillingDateStart, setFillingDateStart] = useState()
+    const [fillingDateEnd, setFillingDateEnd] = useState()
+    const [expiryDateStart, setExpiryDateStart] = useState()
+    const [expiryDateEnd, setExpiryDateEnd] = useState(new Date())
 
 
     const [state, setState] = useState({
@@ -77,8 +77,7 @@ export default function GazpromSearchPanel() {
                     variant="outlined"
                 />
             </Box>
-
-            <Box>
+            {!admin && <Box>
                 <Typography className={classes.labelText}>Статус заявки</Typography>
 
                 <FormControl component="fieldset">
@@ -108,19 +107,25 @@ export default function GazpromSearchPanel() {
                         />
                     </FormGroup>
                 </FormControl>
-            </Box>
+            </Box>}
+
 
             <Box>
                 <Typography className={classes.labelText}>Дата подачи</Typography>
-                <GazpromDatePicker className={classes.margin} size={"small"} value={fillingDateStart} onChange={setFillingDateStart}/>
-                <GazpromDatePicker className={classes.margin} size={"small"} value={fillingDateEnd} onChange={setFillingDateEnd}/>
+                <GazpromDatePicker className={classes.margin} size={"small"} value={fillingDateStart}
+                                   onChange={setFillingDateStart}/>
+                <GazpromDatePicker className={classes.margin} size={"small"} value={fillingDateEnd}
+                                   onChange={setFillingDateEnd} placeholder="Напишите причину отклонения заявки..." />
             </Box>
 
-            <Box>
+            {!admin && <Box>
                 <Typography className={classes.labelText}>Дата выдачи</Typography>
-                <GazpromDatePicker className={classes.margin} size={"small"} value={expiryDateStart} onChange={setExpiryDateStart}/>
-                <GazpromDatePicker className={classes.margin} size={"small"} value={expiryDateEnd} onChange={setExpiryDateEnd}/>
-            </Box>
+                <GazpromDatePicker className={classes.margin} size={"small"} value={expiryDateStart}
+                                   onChange={setExpiryDateStart}  placeholder="Напишите причину отклонения заявки..."/>
+                <GazpromDatePicker className={classes.margin} size={"small"} value={expiryDateEnd}
+                                   onChange={setExpiryDateEnd}/>
+            </Box>}
+
             <GazpromButton
                 fullWidth
                 variant="contained"

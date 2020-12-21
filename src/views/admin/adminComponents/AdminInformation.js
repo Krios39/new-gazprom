@@ -26,6 +26,8 @@ export default function AdminInformation() {
     const [data, setData] = useState([])
     const history = useHistory()
 
+    const requestListTitle = role === "owner" ? "Список заявок владельца" : "Список заявок администратора"
+
     useEffect(() => {
         const getData = () => {
             const url = role === "owner" ? OWNER_REQUESTS : ADMIN_REQUESTS
@@ -48,30 +50,12 @@ export default function AdminInformation() {
         getData()
     }, [accessToken, history, params.adminId, role])
 
-    // const getData=()=>{
-    //
-    //
-    //     // axios.get(BASE_URL + url, {
-    //     //     headers: {
-    //     //         "Content-Type": "application/json",
-    //     //         "Authorization": "Bearer " + accessToken
-    //     //     },
-    //     //     params: {
-    //     //         userId: params.adminId
-    //     //     }
-    //     // })
-    //     //     .then(resp => {
-    //     //         setData(resp.data)
-    //     //     })
-    //     //     .catch(e => {
-    //     //         if (e.response.status === 401) history.push('/authorization')
-    //     //     })
-    // }
 
     return (
         <Box mx={2} className={classes.requestBox}>
-            <GazpromSearchPanel full={false}/>
-            <RequestList searchPanel={true} fillingDate={true} status={true} data={data} admin/>
+            <GazpromSearchPanel admin/>
+            <RequestList title={requestListTitle} searchPanel={true} fillingDate={true} status={true} data={data}
+                         admin/>
         </Box>
 
     )

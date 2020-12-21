@@ -97,7 +97,7 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-export default function RequestList({data, searchPanel, privileges, fillingDate, status, admin}) {
+export default function RequestList({title, data, searchPanel, privileges, expiryDate, status, admin}) {
     const classes = useStyles()
     const [selectSortCategory, setSelectSortCategory] = useState(0)
     const [sortOrder, setSortOrder] = useState(10)
@@ -109,6 +109,8 @@ export default function RequestList({data, searchPanel, privileges, fillingDate,
     const [newRequest, setNewRequest] = useState([])
 
     const [requestOpen, setRequestOpen] = useState(false)
+
+    const [columnWidths, setColumnWidths] = useState([])
 
     const {requestId} = useParams()
 
@@ -134,9 +136,9 @@ export default function RequestList({data, searchPanel, privileges, fillingDate,
                 c.push(request.idRequest)
                 c.push(request.system)
                 if (privileges) c.push(request.privileges)
-                c.push(dateToString(request.fillingDate))
-                if (fillingDate) if (request.fillingDate) c.push(dateToString(request.expiryDate))
+                if (expiryDate) if (request.expiryDate) c.push(dateToString(request.expiryDate))
                 else c.push(dateToString("Бессрочно"))
+                c.push(dateToString(request.fillingDate))
                 if (status) c.push(getStatus(request.status))
                 a.push(c)
                 return a
@@ -144,7 +146,7 @@ export default function RequestList({data, searchPanel, privileges, fillingDate,
         }
         makeNewRequest()
         setNewRequest(a)
-    }, [fillingDate, privileges, requests, status])
+    }, [expiryDate, privileges, requests, status])
 
     useEffect(() => {
         setRequests(data)
@@ -152,16 +154,22 @@ export default function RequestList({data, searchPanel, privileges, fillingDate,
 
     useEffect(() => {
         let a = []
+        let b = []
         const makeTableTitle = () => {
             a.push("Информационная система")
             if (privileges) a.push("Привелегии")
-            if (fillingDate) a.push("Дата подачи")
-            a.push("Дата выдачи")
+            a.push("Дата подачи")
+            if (expiryDate) a.push("Дата выдачи")
             if (status) a.push("Статус")
+            console.log("заголовок", a.length)
+            if (a.length === 3) b = [{xs: 6}, {xs: 'auto'}, {xs: 'auto'}]
+            if (a.length === 4) b = [{xs: 5}, {xs: 'auto'}, {xs: 'auto'}, {xs: 'auto'}]
+            if (a.length === 5) b = [{xs: 4}, {xs: 'auto'}, {xs: 'auto'}, {xs: 'auto'}, {xs: 'auto'}]
         }
         makeTableTitle()
+        setColumnWidths(b)
         setSortCategories(a)
-    }, [fillingDate, privileges, status])
+    }, [expiryDate, privileges, status])
 
 
     useEffect(() => {
@@ -231,7 +239,7 @@ export default function RequestList({data, searchPanel, privileges, fillingDate,
         <Box className={cssClass}>
             <Box className={classes.header}>
                 <Typography className={classes.label}>
-                    Список заявок сотрудника
+                    {title}
                 </Typography>
                 <Box className={classes.sortBox}>
                     <Typography>
@@ -265,6 +273,7 @@ export default function RequestList({data, searchPanel, privileges, fillingDate,
             <Box className={classes.table}>
                 <Grid container
                       className={clsx(classes.tableCell, classes.borderLabel)}
+                      wrap="nowrap"
                       direction="row"
                       justify="space-around"
                       alignItems="center"
@@ -272,9 +281,11 @@ export default function RequestList({data, searchPanel, privileges, fillingDate,
                 >
                     {sortCategories.map((category, key) =>
                         <Grid key={key}
+                              wrap="nowrap"
                               item
-                              xs
-                              zeroMinWidth container justify="center"
+                              xs={columnWidths[key].xs}
+                              container
+                              justify="center"
                         >
                             <Typography
                                 component={'span'}
@@ -300,6 +311,7 @@ export default function RequestList({data, searchPanel, privileges, fillingDate,
                           direction="row"
                           justify="space-around"
                           alignItems="center"
+                          wrap="nowrap"
                           spacing={2}
                           onClick={() => onRequestClick(cellItem[0])}
                     >
@@ -308,8 +320,7 @@ export default function RequestList({data, searchPanel, privileges, fillingDate,
                             <Grid key={key1}
                                   wrap="nowrap"
                                   item
-                                  xs
-                                  zeroMinWidth
+                                  xs={columnWidths[key1 - 1].xs}
                                   container justify="center"
                             >
                                 {(Array.isArray(item1)) ?

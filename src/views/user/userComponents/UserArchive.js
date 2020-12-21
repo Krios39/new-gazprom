@@ -50,7 +50,7 @@ export default function UserArchive() {
             <UserInformationPanel full={false}/>
             <Box mx={2} className={classes.requestBox}>
                 <GazpromSearchPanel/>
-                <RequestList data={data} searchPanel={true} privileges={true} fillingDate={true} status={true}/>
+                <RequestList title="Список заявок сотрудника" data={data} searchPanel privileges expiryDate status/>
             </Box>
         </Box>
     )
