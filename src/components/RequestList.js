@@ -136,9 +136,9 @@ export default function RequestList({title, data, searchPanel, privileges, expir
                 c.push(request.idRequest)
                 c.push(request.system)
                 if (privileges) c.push(request.privileges)
-                if (expiryDate) if (request.expiryDate) c.push(dateToString(request.expiryDate))
+                if (expiryDate) if (request.expiryDate) c.push(dateToString(request.fillingDate))
                 else c.push(dateToString("Бессрочно"))
-                c.push(dateToString(request.fillingDate))
+                c.push(dateToString(request.expiryDate))
                 if (status) c.push(getStatus(request.status))
                 a.push(c)
                 return a
