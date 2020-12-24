@@ -4,7 +4,7 @@ import {
     Dialog, DialogTitle, DialogContent, DialogActions,
     List, ListItem, ListItemIcon, ListItemText,
     Paper, Radio,
-    Typography, FormControlLabel, Checkbox, CircularProgress, Link
+    Typography, FormControlLabel, CircularProgress, Link
 } from "@material-ui/core";
 import {GazpromButton} from "../../../components/GazpromButton";
 import {makeStyles} from "@material-ui/core/styles";
@@ -16,6 +16,7 @@ import axios from "axios"
 import {ADD_REQUEST, ALL_SYSTEMS, ALL_USERS, BASE_URL} from "../../../constants/Urls";
 import {accessTokenContext} from "../../../App";
 import Tooltip from "@material-ui/core/Tooltip";
+import {GazpromCheckbox} from "../../../components/GazpromCheckbox";
 
 const GazpromRadio = withStyles({
     root: {
@@ -26,16 +27,6 @@ const GazpromRadio = withStyles({
     },
     checked: {},
 })((props) => <Radio color="default" {...props} />);
-
-const GazpromCheckbox = withStyles({
-    root: {
-        color: '#2D9CDB',
-        '&$checked': {
-            color: '#2D9CDB',
-        },
-    },
-    checked: {},
-})((props) => <Checkbox color="default" {...props} />);
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -75,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
         alignItems: "flex-start",
         maxHeight: 250
     },
-    boldText:{
+    boldText: {
         fontWeight: 600
     }
 }));
@@ -221,7 +212,7 @@ export default function CreateRequest() {
         setDialogStep(prevState => prevState + step)
     }
 
-    const dialogOpen = step=>{
+    const dialogOpen = step => {
         setDialogStep(step)
         setSystemDialogOpen(true)
     }
@@ -265,13 +256,13 @@ export default function CreateRequest() {
                             <Box className={clsx([classes.paper, classes.margin])}>
                                 <Box className={clsx(classes.regularText, classes.margin)}>
                                     <Typography className={clsx(classes.formElement, classes.boldText)}>
-                                        <Link color="inherit" onClick={()=>dialogOpen(0)}>
-                                        {systems.find(system => system.id === selectedSystem).title}
+                                        <Link color="inherit" onClick={() => dialogOpen(0)}>
+                                            {systems.find(system => system.id === selectedSystem).title}
                                         </Link>
                                     </Typography>
                                     <Typography className={clsx(classes.formElement, classes.boldText)}>
-                                        <Link color="inherit" onClick={()=>dialogOpen(1)}>
-                                        Привилегии: {getPrivilegesString()}
+                                        <Link color="inherit" onClick={() => dialogOpen(1)}>
+                                            Привилегии: {getPrivilegesString()}
                                         </Link>
                                     </Typography>
                                     <Typography className={clsx(classes.formElement, classes.boldText)}>
@@ -318,21 +309,25 @@ export default function CreateRequest() {
                     {dialogStep === 0 && systems.map((system, key) =>
                         <FormControlLabel
                             key={key}
-                            control={<GazpromRadio className={classes.check} checked={(system.id === selectedSystem)}
-                                                   onChange={() => systemChange(system.id)}/>}
+                            control={
+                                <GazpromRadio
+                                    className={classes.check}
+                                    checked={(system.id === selectedSystem)}
+                                    onChange={() => systemChange(system.id)}/>}
                             label={<Typography className={classes.littleText}>{system.title}</Typography>}
                         />
                     )}
                     {dialogStep !== 0 && privileges.map((privilege, key) =>
                         <Tooltip key={key} title={privilege.description}>
-                        <FormControlLabel
-                            control={
-                                <GazpromCheckbox className={classes.check}
-                                                      checked={(selectedPrivileges.indexOf(privilege.id) > -1)}
-                                                      onChange={() => privilegeChange(key)}/>
-                            }
-                            label={<Typography className={classes.littleText}>{privilege.title}</Typography>}
-                        />
+                            <FormControlLabel
+                                control={
+                                    <GazpromCheckbox
+                                        className={classes.check}
+                                        checked={(selectedPrivileges.indexOf(privilege.id) > -1)}
+                                        onChange={() => privilegeChange(key)}/>
+                                }
+                                label={<Typography className={classes.littleText}>{privilege.title}</Typography>}
+                            />
                         </Tooltip>
                     )
                     }
@@ -375,7 +370,7 @@ export default function CreateRequest() {
                                         checked={(selectedWorkers.indexOf(worker.userId) > -1)}
                                     />
                                 </ListItemIcon>
-                                <ListItemText primary={clsx(worker.lastName, worker.name,worker.middleName)}/>
+                                <ListItemText primary={clsx(worker.lastName, worker.name, worker.middleName)}/>
                             </ListItem>
                         )
                         }

@@ -161,7 +161,6 @@ export default function RequestList({title, data, searchPanel, privileges, expir
             a.push("Дата подачи")
             if (expiryDate) a.push("Дата выдачи")
             if (status) a.push("Статус")
-            console.log("заголовок", a.length)
             if (a.length === 3) b = [{xs: 6}, {xs: 'auto'}, {xs: 'auto'}]
             if (a.length === 4) b = [{xs: 5}, {xs: 'auto'}, {xs: 'auto'}, {xs: 'auto'}]
             if (a.length === 5) b = [{xs: 4}, {xs: 'auto'}, {xs: 'auto'}, {xs: 'auto'}, {xs: 'auto'}]

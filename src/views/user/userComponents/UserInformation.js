@@ -35,7 +35,7 @@ export default function UserInformation() {
 
     return (
         <Box>
-            <UserInformationPanel/>
+            <UserInformationPanel full/>
             <Box mx={2}>
                 <RequestList title="Cписок активных заявок сотрудника" data={data} privileges expiryDate/>
             </Box>

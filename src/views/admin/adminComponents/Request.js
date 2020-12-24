@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useHistory, useParams} from "react-router";
-import {Button, CircularProgress, Grid, makeStyles, Typography,Dialog,Tooltip,Paper,Box} from "@material-ui/core";
+import {Button, CircularProgress, Grid, makeStyles, Typography, Dialog, Tooltip, Paper, Box} from "@material-ui/core";
 import {withStyles} from "@material-ui/core/styles";
 import axios from "axios"
 import {ADMIN_AGREE, ADMIN_DISAGREE, BASE_URL, OWNER_AGREE, OWNER_DISAGREE, REQUEST} from "../../../constants/Urls";
@@ -34,8 +34,7 @@ const DisagreeButton = withStyles({
     }
 })(Button)
 
-const useStyles = makeStyles((theme) => (
-    {
+const useStyles = makeStyles((theme) => ({
         paper: {
             minWidth: "80%",
         },
@@ -318,7 +317,6 @@ export default function Request({open, onClose}) {
                                         </Typography>
                                     </Tooltip>
                                 </Grid>
-
                             </Grid>
                         )}
                     </Box>
@@ -330,7 +328,6 @@ export default function Request({open, onClose}) {
                     </Box>
                 </Paper>
             }
-
             <Dialog maxWidth="lg" open={reasonDialogOpen} onClose={() => setReasonDialogOpen(false)}>
                 <Paper className={classes.dialogBox} elevation={3}>
                     <Typography
@@ -348,8 +345,7 @@ export default function Request({open, onClose}) {
                     <Box className={classes.buttonBox}>
                         <AgreeButton onClick={sendConsent} variant="outlined">Да</AgreeButton>
                         <DisagreeButton onClick={() => setReasonDialogOpen(false)}
-                                        variant="outlined">Отмена
-                        </DisagreeButton>
+                                        variant="outlined">Отмена</DisagreeButton>
                     </Box>
                 </Paper>
             </Dialog>

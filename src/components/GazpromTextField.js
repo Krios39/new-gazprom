@@ -1,5 +1,7 @@
 import {withStyles} from "@material-ui/core/styles";
-import {TextField} from "@material-ui/core";
+import {TextField, Typography} from "@material-ui/core";
+import React from "react";
+import Box from "@material-ui/core/Box";
 
 export const GazpromTextField = withStyles({
     root: {
@@ -24,3 +26,21 @@ export const SmallGazpromTextField = withStyles({
         },
     },
 })(TextField);
+
+export default function GazpromTextFieldWithTitle({title, error, value, onChange,className}) {
+    return (
+        <Box className={className}>
+            {title &&
+            <Typography>{title}</Typography>
+            }
+            <GazpromTextField
+                size="small"
+                fullWidth
+                variant="outlined"
+                error={error}
+                value={value}
+                onChange={(event) => onChange(event.target.value)}
+            />
+        </Box>
+    )
+}

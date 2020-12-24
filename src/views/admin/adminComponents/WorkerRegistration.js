@@ -12,7 +12,7 @@ import React, {useContext, useEffect, useState} from "react";
 import Box from "@material-ui/core/Box";
 import {makeStyles} from "@material-ui/core/styles";
 import clsx from "clsx";
-import {GazpromTextField} from "../../../components/GazpromTextField";
+import GazpromTextFieldWithTitle, {GazpromTextField} from "../../../components/GazpromTextField";
 import withStyles from "@material-ui/core/styles/withStyles";
 import {GazpromButton} from "../../../components/GazpromButton";
 import axios from "axios"
@@ -44,7 +44,6 @@ const GazpromInput = withStyles((theme) => ({
 const useStyles = makeStyles((theme) => ({
     main: {
         marginTop: 20,
-
     },
     formElement: {
         marginBottom: 10,
@@ -74,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
         color: '#06c',
         position: 'absolute',
         left: '50%',
-        marginTop: 20,
+        marginTop: 8,
         marginLeft: -12,
     },
     systems: {
@@ -87,13 +86,16 @@ const useStyles = makeStyles((theme) => ({
         minWidth: 316
     },
     regButton: {
-        marginTop: 5
+        marginTop: 5,
+        width:"100%"
     }
 }));
 
 export default function WorkerRegistration() {
     const classes = useStyles()
     const {accessToken} = useContext(accessTokenContext)
+
+    const [registrationLoading,setRegistrationLoading] = useState(false)
 
     const [units, setUnits] = useState([])
     const [selectedUnit, setSelectedUnit] = useState(0)
@@ -126,7 +128,6 @@ export default function WorkerRegistration() {
             }
         )
             .then(resp => {
-
                 setUnits(resp.data)
                 setSelectedUnit(resp.data[0].id)
                 setUnitLoading(false)
@@ -179,7 +180,7 @@ export default function WorkerRegistration() {
     }
 
     const registrate = () => {
-
+        setRegistrationLoading(true)
         const request = {
             userName: userName,
             password: password,
@@ -196,8 +197,10 @@ export default function WorkerRegistration() {
                 "Authorization": "Bearer " + accessToken
             }
         }).then(resp => {
+            setRegistrationLoading(false)
             console.log(resp)
         }).catch(e => {
+            setRegistrationLoading(false)
             if (e.response.status === 401) history.push('/authorization')
         })
     }
@@ -237,56 +240,33 @@ export default function WorkerRegistration() {
         <Container className={classes.main} maxWidth="xs">
             <Paper elevation={3}>
                 <Box className={classes.paper}>
-
                     <Typography
                         className={clsx(classes.titleText)}
                         variant="h5"
                     >
                         Регистрация сотрудника
                     </Typography>
-
-                    <Box className={clsx(classes.formElement, classes.margin)}>
-                        <Typography>
-                            Фамилия
-                        </Typography>
-                        <GazpromTextField
-                            size="small"
-                            fullWidth
-                            variant="outlined"
-                            value={lastName}
-                            onChange={event => setLastName(event.target.value)}
-                            error={lastNameError}
-                        />
-                    </Box>
-
-                    <Box className={clsx(classes.formElement, classes.margin)}>
-                        <Typography>
-                            Имя
-                        </Typography>
-                        <GazpromTextField
-                            size="small"
-                            fullWidth
-                            variant="outlined"
-                            value={name}
-                            onChange={event => setName(event.target.value)}
-                            error={nameError}
-                        />
-                    </Box>
-
-                    <Box className={clsx(classes.formElement, classes.margin)}>
-                        <Typography>
-                            Отчество
-                        </Typography>
-                        <GazpromTextField
-                            size="small"
-                            fullWidth
-                            variant="outlined"
-                            value={middleName}
-                            onChange={event => setMiddleName(event.target.value)}
-                            error={middleNameError}
-                        />
-                    </Box>
-
+                    <GazpromTextFieldWithTitle
+                        className={clsx(classes.formElement, classes.margin)}
+                        title={"Фамилия"}
+                        onChange={setLastName}
+                        value={lastName}
+                        error={lastNameError}
+                    />
+                    <GazpromTextFieldWithTitle
+                        className={clsx(classes.formElement, classes.margin)}
+                        title={"Имя"}
+                        onChange={setName}
+                        value={name}
+                        error={nameError}
+                    />
+                    <GazpromTextFieldWithTitle
+                        className={clsx(classes.formElement, classes.margin)}
+                        title={"Отчество"}
+                        onChange={setMiddleName}
+                        value={middleName}
+                        error={middleNameError}
+                    />
                     <Box className={clsx(classes.formElement, classes.margin)}>
                         <Typography>
                             Отдел
@@ -327,7 +307,6 @@ export default function WorkerRegistration() {
                                 </Select>
                             </FormControl>
                         }
-
                     </Box>
 
                     <Box className={clsx(classes.formElement, classes.margin)}>
@@ -339,7 +318,6 @@ export default function WorkerRegistration() {
                             variant="contained"
                             color="primary"
                             onClick={getUserName}
-
                         >Сгенерировать логин</GazpromButton>
                         <GazpromTextField
                             size="small"
@@ -359,7 +337,6 @@ export default function WorkerRegistration() {
                             variant="contained"
                             color="primary"
                             onClick={() => setPassword(genPassword(8))}
-
                         >Сгенерировать пароль</GazpromButton>
                         <GazpromTextField
                             size="small"
@@ -370,14 +347,17 @@ export default function WorkerRegistration() {
                             error={passwordError}
                         />
                     </Box>
+                    <Box className={classes.margin}>
+                        <GazpromButton
+                            className={ classes.regButton}
+                            variant="contained"
+                            color="primary"
+                            onClick={fieldsCheck}
+                            disabled={registrationLoading}
+                        >Зарегистрировать</GazpromButton>
+                        {registrationLoading && <CircularProgress size={28} className={classes.buttonProgress}/>}
+                    </Box>
 
-
-                    <GazpromButton
-                        className={clsx(classes.margin, classes.regButton)}
-                        variant="contained"
-                        color="primary"
-                        onClick={fieldsCheck}
-                    >Зарегистрировать</GazpromButton>
                 </Box>
             </Paper>
         </Container>
