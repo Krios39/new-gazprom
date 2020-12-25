@@ -1,25 +1,13 @@
 import {Box} from "@material-ui/core";
 import React, {useContext, useEffect, useState} from "react";
 import RequestList from "../../../components/RequestList";
-import GazpromSearchPanel from "../../../components/GazpromSearchPanel";
-import {makeStyles} from "@material-ui/core/styles";
 import axios from "axios";
 import {ADMIN_REQUESTS, BASE_URL, OWNER_REQUESTS} from "../../../constants/Urls";
 import {accessTokenContext, roleContext} from "../../../App";
 import {useHistory, useParams} from "react-router-dom";
 
-
-const useStyles = makeStyles(() => ({
-    requestBox: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "flex-start",
-    }
-}))
-
 export default function AdminInformation() {
 
-    const classes = useStyles()
     const {accessToken} = useContext(accessTokenContext)
     const {role} = useContext(roleContext)
     const params = useParams();
@@ -52,9 +40,8 @@ export default function AdminInformation() {
 
 
     return (
-        <Box mx={2} className={classes.requestBox}>
-            <GazpromSearchPanel admin/>
-            <RequestList title={requestListTitle} searchPanel={true} fillingDate={true} status={true} data={data}
+        <Box mx={2}>
+            <RequestList title={requestListTitle} searchPanel fillingDate status data={data}
                          admin/>
         </Box>
 

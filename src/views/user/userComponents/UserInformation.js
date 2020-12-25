@@ -12,33 +12,32 @@ export default function UserInformation() {
     const {accessToken} = useContext(accessTokenContext)
     const params = useParams();
 
-    const [data,setData] = useState([])
+    const [data, setData] = useState([])
 
     const history = useHistory()
 
-    useEffect(()=>{
-        axios.get(BASE_URL+ACTIVE_REQUESTS,{
+    useEffect(() => {
+        axios.get(BASE_URL + ACTIVE_REQUESTS, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": "Bearer " + accessToken
             },
             params: {
                 userId: params.userId
-            }})
-            .then(resp =>{
+            }
+        })
+            .then(resp => {
                 setData(resp.data)
             })
             .catch(e => {
                 if (e.response.status === 401) history.push('/authorization')
             })
-    },[])
+    }, [])
 
     return (
         <Box>
             <UserInformationPanel full/>
-            <Box mx={2}>
-                <RequestList title="Cписок активных заявок сотрудника" data={data} privileges expiryDate/>
-            </Box>
+            <RequestList title="Cписок активных заявок сотрудника" data={data} privileges expiryDate/>
         </Box>
     )
 

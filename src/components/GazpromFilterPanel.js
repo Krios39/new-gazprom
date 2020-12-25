@@ -46,7 +46,7 @@ const useStyles = makeStyles(() => ({
 }))
 
 
-export default function GazpromSearchPanel({admin}) {
+export default function GazpromFilterPanel({admin}) {
     const classes = useStyles()
 
     const [fillingDateStart, setFillingDateStart] = useState()

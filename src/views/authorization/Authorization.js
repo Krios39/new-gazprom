@@ -1,10 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react';
 import Gazprom from "../../static/Gazprom (icon).png"
-import {Avatar, Box, CardContent, CircularProgress, Container, Paper, Typography} from '@material-ui/core'
+import {Avatar, Box, CircularProgress, Container, Paper, Typography} from '@material-ui/core'
 import {makeStyles} from '@material-ui/core/styles';
 import {useHistory} from "react-router-dom"
 import {GazpromButton} from "../../components/GazpromButton";
-import GazpromTextFieldWithTitle, {GazpromTextField} from "../../components/GazpromTextField";
+import GazpromTextFieldWithTitle from "../../components/GazpromTextField";
 import GazpromDialog from "../../components/GazpromDialog";
 import axios from "axios"
 import {BASE_URL, SIGN_IN} from "../../constants/Urls";
@@ -80,8 +80,10 @@ export default function Authorization() {
                 if (resp.data.role === "ROLE_PRIMARY_ADMIN" || resp.data.role === "ROLE_BACKUP_ADMIN") setRole("admin")
             })
             .catch(error => {
-                if (error.response.status === 401) handleOpen("Пользователь с заданными логином и паролем не найден")
-                if (error.response.status === 500) handleOpen("Ошибка сервера")
+                if (error.response){
+                    if (error.response.status === 401) handleOpen("Пользователь с заданными логином и паролем не найден")
+                    if (error.response.status === 500) handleOpen("Ошибка сервера")
+                } else handleOpen("Проблемы с подключением к интернету")
             })
     }
 

@@ -3,31 +3,21 @@ import React, {useContext, useEffect, useState} from "react";
 import RequestList from "../../../components/RequestList";
 import UserInformationPanel from "./UserInformationPanel";
 import {makeStyles} from "@material-ui/core/styles";
-import GazpromSearchPanel from "../../../components/GazpromSearchPanel";
 import axios from "axios"
 import {ALL_USERS_REQUESTS, BASE_URL} from "../../../constants/Urls";
 import {accessTokenContext} from "../../../App";
 import {useHistory, useParams} from "react-router";
 
-const useStyles = makeStyles(() => ({
-    requestBox: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "flex-start",
-    }
-}))
-
 export default function UserArchive() {
-    const classes = useStyles()
 
     const {accessToken} = useContext(accessTokenContext)
     const {userId} = useParams()
     const history = useHistory()
-    const [data,setData] = useState([])
+    const [data, setData] = useState([])
 
 
     useEffect(() => {
-        axios.get(BASE_URL +ALL_USERS_REQUESTS, {
+        axios.get(BASE_URL + ALL_USERS_REQUESTS, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + accessToken
@@ -48,10 +38,7 @@ export default function UserArchive() {
     return (
         <Box>
             <UserInformationPanel full={false}/>
-            <Box mx={2} className={classes.requestBox}>
-                <GazpromSearchPanel/>
-                <RequestList title="Список заявок сотрудника" data={data} searchPanel privileges expiryDate status/>
-            </Box>
+            <RequestList title="Список заявок сотрудника" data={data} searchPanel privileges expiryDate status/>
         </Box>
     )
 }

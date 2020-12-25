@@ -6,6 +6,7 @@ import clsx from "clsx";
 import Tooltip from "@material-ui/core/Tooltip";
 import {useHistory, useParams} from "react-router-dom";
 import Request from "../views/admin/adminComponents/Request";
+import GazpromFilterPanel from "./GazpromFilterPanel";
 
 
 const GazpromInput = withStyles((theme) => ({
@@ -91,17 +92,20 @@ const useStyles = makeStyles((theme) => ({
         color: "#0079C2",
         fontWeight: 600,
     },
-    requestBox: {
+    requestFullWidth: {
         width: "100%"
     },
-
+    requestBox: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "flex-start",
+    }
 }))
 
 export default function RequestList({title, data, searchPanel, privileges, expiryDate, status, admin}) {
     const classes = useStyles()
     const [selectSortCategory, setSelectSortCategory] = useState(0)
     const [sortOrder, setSortOrder] = useState(10)
-    const [cssClass, setCssClass] = useState("")
     const [requests, setRequests] = useState([])
 
     const [sortCategories, setSortCategories] = useState([])
@@ -123,10 +127,6 @@ export default function RequestList({title, data, searchPanel, privileges, expir
         }
         adminCheck()
     }, [admin, requestId])
-
-    useEffect(() => {
-        if (searchPanel) setCssClass(classes.requestBox)
-    }, [classes.requestBox, searchPanel])
 
     useEffect(() => {
         let a = []
@@ -235,132 +235,134 @@ export default function RequestList({title, data, searchPanel, privileges, expir
     }
 
     return (
-        <Box className={cssClass}>
-            <Box className={classes.header}>
-                <Typography className={classes.label}>
-                    {title}
-                </Typography>
-                <Box className={classes.sortBox}>
-                    <Typography>
-                        Сортировать по:
+        <Box mx={2} className={classes.requestBox}>
+            {searchPanel &&  <GazpromFilterPanel admin/>}
+            <Box className={classes.requestFullWidth}>
+                <Box className={classes.header}>
+                    <Typography className={classes.label}>
+                        {title}
                     </Typography>
-                    <FormControl className={classes.margin}>
-                        <Select
-                            value={selectSortCategory}
-                            onChange={sortCategoryHandleChange}
-                            input={<GazpromInput/>}
-                        >
-                            {sortCategories.map((category, key) =>
-                                <MenuItem key={key} value={key}>{category}</MenuItem>
-                            )
-                            }
-                        </Select>
-                    </FormControl>
-                    <FormControl className={classes.margin}>
-                        <Select
-                            value={sortOrder}
-                            onChange={sortOrderHandleChange}
-                            input={<GazpromInput/>}
-                        >
-                            <MenuItem value={10}>Возрастанию</MenuItem>
-                            <MenuItem value={20}>Убыванию</MenuItem>
-                        </Select>
-                    </FormControl>
+                    <Box className={classes.sortBox}>
+                        <Typography>
+                            Сортировать по:
+                        </Typography>
+                        <FormControl className={classes.margin}>
+                            <Select
+                                value={selectSortCategory}
+                                onChange={sortCategoryHandleChange}
+                                input={<GazpromInput/>}
+                            >
+                                {sortCategories.map((category, key) =>
+                                    <MenuItem key={key} value={key}>{category}</MenuItem>
+                                )
+                                }
+                            </Select>
+                        </FormControl>
+                        <FormControl className={classes.margin}>
+                            <Select
+                                value={sortOrder}
+                                onChange={sortOrderHandleChange}
+                                input={<GazpromInput/>}
+                            >
+                                <MenuItem value={10}>Возрастанию</MenuItem>
+                                <MenuItem value={20}>Убыванию</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Box>
                 </Box>
-            </Box>
 
-            <Box className={classes.table}>
-                <Grid container
-                      className={clsx(classes.tableCell, classes.borderLabel)}
-                      wrap="nowrap"
-                      direction="row"
-                      justify="space-around"
-                      alignItems="center"
-                      spacing={2}
-                >
-                    {sortCategories.map((category, key) =>
-                        <Grid key={key}
-                              wrap="nowrap"
-                              item
-                              xs={columnWidths[key].xs}
-                              container
-                              justify="center"
-                        >
-                            <Typography
-                                component={'span'}
-                                noWrap
-                                className={clsx(classes.date, classes.listLabel)}>
-                                <Box
-                                    component="div"
-                                    textOverflow="ellipsis"
-                                    overflow="hidden"
-                                >
-                                    {category}
-                                </Box>
-                            </Typography>
-                        </Grid>
-                    )
-                    }
-                </Grid>
-
-                {newRequest.map((cellItem, key) =>
-                    <Grid key={key}
-                          container
-                          className={clsx(classes.tableCell, classes.borderCell)}
+                <Box className={classes.table}>
+                    <Grid container
+                          className={clsx(classes.tableCell, classes.borderLabel)}
+                          wrap="nowrap"
                           direction="row"
                           justify="space-around"
                           alignItems="center"
-                          wrap="nowrap"
                           spacing={2}
-                          onClick={() => onRequestClick(cellItem[0])}
                     >
-                        {cellItem.map((item1, key1) =>
-                            (key1 !== 0) &&
-                            <Grid key={key1}
+                        {sortCategories.map((category, key) =>
+                            <Grid key={key}
                                   wrap="nowrap"
                                   item
-                                  xs={columnWidths[key1 - 1].xs}
-                                  container justify="center"
+                                  xs={columnWidths[key].xs}
+                                  container
+                                  justify="center"
                             >
-                                {(Array.isArray(item1)) ?
-                                    <Grid container direction="column" alignItems="center">
-                                        {item1.map((privilege, key2) =>
-                                            <Grid key={key2}
-                                                  item
-                                                  xs
-                                                  zeroMinWidth>
-                                                <Tooltip key={key2} title={privilege.title}>
-                                                    <Typography component={'span'} noWrap className={classes.date}>
-                                                        <Box
-                                                            component="div"
-                                                            textOverflow="ellipsis"
-                                                            overflow="hidden"
-                                                        >
-                                                            {privilege.title}
-                                                        </Box>
-                                                    </Typography>
-                                                </Tooltip>
-                                            </Grid>
-                                        )}
-                                    </Grid>
-                                    :
-                                    <Tooltip title={item1}>
-                                        <Typography component={'span'} noWrap className={classes.date}>
-                                            <Box
-                                                component="div"
-                                                textOverflow="ellipsis"
-                                                overflow="hidden"
-                                            >
-                                                {item1}
-                                            </Box>
-                                        </Typography>
-                                    </Tooltip>}
+                                <Typography
+                                    component={'span'}
+                                    noWrap
+                                    className={clsx(classes.date, classes.listLabel)}>
+                                    <Box
+                                        component="div"
+                                        textOverflow="ellipsis"
+                                        overflow="hidden"
+                                    >
+                                        {category}
+                                    </Box>
+                                </Typography>
                             </Grid>
-                        )}
+                        )
+                        }
                     </Grid>
-                )}
-            </Box>
 
+                    {newRequest.map((cellItem, key) =>
+                        <Grid key={key}
+                              container
+                              className={clsx(classes.tableCell, classes.borderCell)}
+                              direction="row"
+                              justify="space-around"
+                              alignItems="center"
+                              wrap="nowrap"
+                              spacing={2}
+                              onClick={() => onRequestClick(cellItem[0])}
+                        >
+                            {cellItem.map((item1, key1) =>
+                                (key1 !== 0) &&
+                                <Grid key={key1}
+                                      wrap="nowrap"
+                                      item
+                                      xs={columnWidths[key1 - 1].xs}
+                                      container justify="center"
+                                >
+                                    {(Array.isArray(item1)) ?
+                                        <Grid container direction="column" alignItems="center">
+                                            {item1.map((privilege, key2) =>
+                                                <Grid key={key2}
+                                                      item
+                                                      xs
+                                                      zeroMinWidth>
+                                                    <Tooltip key={key2} title={privilege.title}>
+                                                        <Typography component={'span'} noWrap className={classes.date}>
+                                                            <Box
+                                                                component="div"
+                                                                textOverflow="ellipsis"
+                                                                overflow="hidden"
+                                                            >
+                                                                {privilege.title}
+                                                            </Box>
+                                                        </Typography>
+                                                    </Tooltip>
+                                                </Grid>
+                                            )}
+                                        </Grid>
+                                        :
+                                        <Tooltip title={item1}>
+                                            <Typography component={'span'} noWrap className={classes.date}>
+                                                <Box
+                                                    component="div"
+                                                    textOverflow="ellipsis"
+                                                    overflow="hidden"
+                                                >
+                                                    {item1}
+                                                </Box>
+                                            </Typography>
+                                        </Tooltip>}
+                                </Grid>
+                            )}
+                        </Grid>
+                    )}
+                </Box>
+            </Box>
             <Request open={requestOpen} onClose={() => onRequestClick(-1)}/>
         </Box>
     )
