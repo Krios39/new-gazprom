@@ -1,26 +1,14 @@
-import withStyles from "@material-ui/core/styles/withStyles";
-import Checkbox from "@material-ui/core/Checkbox";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Box from "@material-ui/core/Box";
 import {Typography} from "@material-ui/core";
-import {GazpromTextField, SmallGazpromTextField} from "./GazpromTextField";
+import {SmallGazpromTextField} from "./GazpromTextField";
 import FormControl from "@material-ui/core/FormControl";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import GazpromDatePicker from "./GazpromDatePicker";
 import {GazpromButton} from "./GazpromButton";
 import {makeStyles} from "@material-ui/core/styles";
-
-
-const GazpromCheckbox = withStyles({
-    root: {
-        color: '#2D9CDB',
-        '&$checked': {
-            color: '#2D9CDB',
-        },
-    },
-    checked: {},
-})((props) => <Checkbox color="default" {...props} />);
+import {GazpromCheckbox} from "./GazpromCheckbox";
 
 const useStyles = makeStyles(() => ({
     panelBox: {
@@ -54,11 +42,11 @@ export default function GazpromFilterPanel({admin}) {
     const [expiryDateStart, setExpiryDateStart] = useState()
     const [expiryDateEnd, setExpiryDateEnd] = useState(new Date())
 
-
     const [state, setState] = useState({
-        gilad: true,
-        jason: false,
-        antoine: false,
+        ENABLED: false,
+        DISABLED: false,
+        SHIPPED: false,
+        REFUSED:false
     });
 
     const handleChange = (event) => {
@@ -66,6 +54,10 @@ export default function GazpromFilterPanel({admin}) {
     };
 
     const {active, notActive, rejected, submitted} = state;
+
+    useEffect(()=>{
+        console.log(state)
+    },[state])
 
     return (
         <Box className={classes.panelBox}>
@@ -84,7 +76,7 @@ export default function GazpromFilterPanel({admin}) {
                     <FormGroup>
                         <FormControlLabel
                             className={classes.checkBox}
-                            control={<GazpromCheckbox checked={active} onChange={handleChange}/>}
+                            control={<GazpromCheckbox checked={active} onChange={handleChange} name="ENABLED"/>}
                             label={<Typography className={classes.littleText}>Активна</Typography>}
                         />
                         <FormControlLabel
@@ -92,17 +84,17 @@ export default function GazpromFilterPanel({admin}) {
                             control={<GazpromCheckbox
                                 checked={notActive}
                                 onChange={handleChange}
-                                name="Не активна"/>}
+                                name="DISABLED"/>}
                             label={<Typography className={classes.littleText}>Не активна</Typography>}
                         />
                         <FormControlLabel
                             className={classes.checkBox}
-                            control={<GazpromCheckbox checked={rejected} onChange={handleChange} name="Отклонена"/>}
+                            control={<GazpromCheckbox checked={rejected} onChange={handleChange} name="REFUSED"/>}
                             label={<Typography className={classes.littleText}>Отклонена</Typography>}
                         />
                         <FormControlLabel
                             className={classes.checkBox}
-                            control={<GazpromCheckbox checked={submitted} onChange={handleChange} name="Отправлена"/>}
+                            control={<GazpromCheckbox checked={submitted} onChange={handleChange} name="SHIPPED"/>}
                             label={<Typography className={classes.littleText}>Отправлена</Typography>}
                         />
                     </FormGroup>

@@ -128,7 +128,7 @@ const useStyles = makeStyles((theme) => ({
     }
 ))
 
-export default function Request({open, onClose}) {
+export default function Request({open}) {
     const classes = useStyles()
 
     const {requestId} = useParams()
@@ -217,8 +217,12 @@ export default function Request({open, onClose}) {
         })
     }
 
+    const onRequestClick = (requestId) => {
+                history.push(`${requestId}`)
+        }
+
     return (
-        <Dialog className={classes.dialog} maxWidth="lg" open={open} onClose={() => onClose(-1)}>
+        <Dialog className={classes.dialog} maxWidth="lg" open={open} onClose={() => onRequestClick(-1)}>
             {!dataDownload ?
                 <Box className={classes.progressBox}>
                     <CircularProgress size={28} className={classes.buttonProgress}/>

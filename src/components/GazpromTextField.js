@@ -27,7 +27,7 @@ export const SmallGazpromTextField = withStyles({
     },
 })(TextField);
 
-export default function GazpromTextFieldWithTitle({title, error, value, onChange,className}) {
+export default function GazpromTextFieldWithTitle({title, error, value, onChange,className,password}) {
     return (
         <Box className={className}>
             {title &&
@@ -37,6 +37,7 @@ export default function GazpromTextFieldWithTitle({title, error, value, onChange
                 size="small"
                 fullWidth
                 variant="outlined"
+                type = {password?"password":""}
                 error={error}
                 value={value}
                 onChange={(event) => onChange(event.target.value)}

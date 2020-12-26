@@ -1,55 +1,14 @@
-import {Box, FormControl, Grid, InputBase, MenuItem, Select, Typography} from "@material-ui/core";
+import {Box} from "@material-ui/core";
 import React, {useEffect, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
-import withStyles from "@material-ui/core/styles/withStyles";
-import clsx from "clsx";
-import Tooltip from "@material-ui/core/Tooltip";
-import {useHistory, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import Request from "../views/admin/adminComponents/Request";
 import GazpromFilterPanel from "./GazpromFilterPanel";
-
-
-const GazpromInput = withStyles((theme) => ({
-    root: {
-        color: "#888",
-        width: theme.spacing(22),
-        'label + &': {
-            marginTop: theme.spacing(3),
-        },
-    },
-    input: {
-        borderRadius: 4,
-        border: '1px solid #D9D9D9',
-        fontSize: 16,
-        padding: '10px 26px 10px 12px',
-        '&:focus': {
-            borderRadius: 4,
-            borderColor: '#2D9CDB',
-        },
-    },
-}))(InputBase);
+import RequestListSortPanel from "./RequestListSortPanel";
+import RequestListTableTitle from "./RequestListTableTitle";
+import RequestListTableCell from "./RequestListTableCell";
 
 const useStyles = makeStyles((theme) => ({
-    header: {
-        margin: "17px 0px 17px 0px",
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        height: 42
-    },
-    sortBox: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center"
-    },
-    margin: {
-        margin: theme.spacing(1),
-    },
-    label: {
-        fontSize: 24,
-        fontWeight: 600,
-    },
     table: {
         paddingTop: theme.spacing(2),
         borderRadius: 8,
@@ -58,39 +17,6 @@ const useStyles = makeStyles((theme) => ({
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "column",
-    },
-    tableCell: {
-        backgroundColor: "#fff",
-        minHeight: 50,
-        margin: theme.spacing(1),
-        maxWidth: 900,
-        width: '97%',
-        borderRadius: 6,
-    },
-    borderCell: {
-        border: "1px solid #d9d9d9",
-    },
-    borderLabel: {
-        border: "1px solid rgba(38, 38, 38, 0.4)",
-    },
-    system: {
-        margin: theme.spacing(3),
-        fontSize: 18,
-        width: "50%"
-    },
-    date: {
-        marginLeft: theme.spacing(3),
-        marginRight: theme.spacing(3),
-        display: "flex",
-        flexDirection: "row",
-        maxWidth: 220,
-        minWidth: 0,
-        overflow: "hidden",
-        textOverflow: "ellipsis"
-    },
-    listLabel: {
-        color: "#0079C2",
-        fontWeight: 600,
     },
     requestFullWidth: {
         width: "100%"
@@ -117,8 +43,6 @@ export default function RequestList({title, data, searchPanel, privileges, expir
     const [columnWidths, setColumnWidths] = useState([])
 
     const {requestId} = useParams()
-
-    const history = useHistory()
 
     useEffect(() => {
         const adminCheck = () => {
@@ -188,15 +112,7 @@ export default function RequestList({title, data, searchPanel, privileges, expir
             if (arr.length !== 0) sortOrder === 10 ? setNewRequest(arr) : setNewRequest(arr.reverse())
         }
         tableSort()
-    }, [])
-
-    const sortCategoryHandleChange = (event) => {
-        setSelectSortCategory(event.target.value)
-    }
-
-    const sortOrderHandleChange = (event) => {
-        setSortOrder(event.target.value)
-    }
+    }, [selectSortCategory, sortOrder])
 
     const dateToString = date => {
         if (date.year === 1) return "-"
@@ -228,142 +144,25 @@ export default function RequestList({title, data, searchPanel, privileges, expir
         return a
     }
 
-    const onRequestClick = (requestId) => {
-        if (admin) {
-            history.push(`${requestId}`)
-        }
-    }
-
     return (
         <Box mx={2} className={classes.requestBox}>
-            {searchPanel &&  <GazpromFilterPanel admin/>}
+            {searchPanel && <GazpromFilterPanel admin={admin}/>}
             <Box className={classes.requestFullWidth}>
-                <Box className={classes.header}>
-                    <Typography className={classes.label}>
-                        {title}
-                    </Typography>
-                    <Box className={classes.sortBox}>
-                        <Typography>
-                            Сортировать по:
-                        </Typography>
-                        <FormControl className={classes.margin}>
-                            <Select
-                                value={selectSortCategory}
-                                onChange={sortCategoryHandleChange}
-                                input={<GazpromInput/>}
-                            >
-                                {sortCategories.map((category, key) =>
-                                    <MenuItem key={key} value={key}>{category}</MenuItem>
-                                )
-                                }
-                            </Select>
-                        </FormControl>
-                        <FormControl className={classes.margin}>
-                            <Select
-                                value={sortOrder}
-                                onChange={sortOrderHandleChange}
-                                input={<GazpromInput/>}
-                            >
-                                <MenuItem value={10}>Возрастанию</MenuItem>
-                                <MenuItem value={20}>Убыванию</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Box>
-                </Box>
-
+                <RequestListSortPanel
+                    title={title}
+                    selectSortCategory={selectSortCategory}
+                    setSelectSortCategory={setSelectSortCategory}
+                    setSortOrder={setSortOrder}
+                    sortCategories={sortCategories}
+                    sortOrder={sortOrder}/>
                 <Box className={classes.table}>
-                    <Grid container
-                          className={clsx(classes.tableCell, classes.borderLabel)}
-                          wrap="nowrap"
-                          direction="row"
-                          justify="space-around"
-                          alignItems="center"
-                          spacing={2}
-                    >
-                        {sortCategories.map((category, key) =>
-                            <Grid key={key}
-                                  wrap="nowrap"
-                                  item
-                                  xs={columnWidths[key].xs}
-                                  container
-                                  justify="center"
-                            >
-                                <Typography
-                                    component={'span'}
-                                    noWrap
-                                    className={clsx(classes.date, classes.listLabel)}>
-                                    <Box
-                                        component="div"
-                                        textOverflow="ellipsis"
-                                        overflow="hidden"
-                                    >
-                                        {category}
-                                    </Box>
-                                </Typography>
-                            </Grid>
-                        )
-                        }
-                    </Grid>
-
+                    <RequestListTableTitle sortCategories={sortCategories} columnWidths={columnWidths}/>
                     {newRequest.map((cellItem, key) =>
-                        <Grid key={key}
-                              container
-                              className={clsx(classes.tableCell, classes.borderCell)}
-                              direction="row"
-                              justify="space-around"
-                              alignItems="center"
-                              wrap="nowrap"
-                              spacing={2}
-                              onClick={() => onRequestClick(cellItem[0])}
-                        >
-                            {cellItem.map((item1, key1) =>
-                                (key1 !== 0) &&
-                                <Grid key={key1}
-                                      wrap="nowrap"
-                                      item
-                                      xs={columnWidths[key1 - 1].xs}
-                                      container justify="center"
-                                >
-                                    {(Array.isArray(item1)) ?
-                                        <Grid container direction="column" alignItems="center">
-                                            {item1.map((privilege, key2) =>
-                                                <Grid key={key2}
-                                                      item
-                                                      xs
-                                                      zeroMinWidth>
-                                                    <Tooltip key={key2} title={privilege.title}>
-                                                        <Typography component={'span'} noWrap className={classes.date}>
-                                                            <Box
-                                                                component="div"
-                                                                textOverflow="ellipsis"
-                                                                overflow="hidden"
-                                                            >
-                                                                {privilege.title}
-                                                            </Box>
-                                                        </Typography>
-                                                    </Tooltip>
-                                                </Grid>
-                                            )}
-                                        </Grid>
-                                        :
-                                        <Tooltip title={item1}>
-                                            <Typography component={'span'} noWrap className={classes.date}>
-                                                <Box
-                                                    component="div"
-                                                    textOverflow="ellipsis"
-                                                    overflow="hidden"
-                                                >
-                                                    {item1}
-                                                </Box>
-                                            </Typography>
-                                        </Tooltip>}
-                                </Grid>
-                            )}
-                        </Grid>
+                        <RequestListTableCell key={key} columnWidths={columnWidths} cellItem={cellItem} admin={admin}/>
                     )}
                 </Box>
             </Box>
-            <Request open={requestOpen} onClose={() => onRequestClick(-1)}/>
+            <Request open={requestOpen}/>
         </Box>
     )
 }

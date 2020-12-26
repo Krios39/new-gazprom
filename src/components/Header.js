@@ -85,8 +85,7 @@ export default function Header({titles, titleKey, setTitleKey}) {
                         <ButtonBase
                             disableRipple={true}>
                             <Typography onClick={() => urlChange(key)}
-                                // eslint-disable-next-line no-mixed-operators
-                                        className={(key === titleKey) && classes.setText || classes.regularText}>
+                                        className={(key === titleKey) ? classes.setText : classes.regularText}>
                                 {item.item}</Typography>
                         </ButtonBase>
                     </Box>

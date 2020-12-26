@@ -132,6 +132,7 @@ export default function Authorization() {
                         title={"Пароль"}
                         error={textFieldError}
                         value={password}
+                        password
                         onChange={setPassword}/>
                     <Box className={clsx(classes.formElement, classes.margin)}>
                         <GazpromButton
