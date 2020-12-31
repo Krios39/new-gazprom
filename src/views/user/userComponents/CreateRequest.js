@@ -156,13 +156,13 @@ export default function CreateRequest() {
         setWorkers(a)
     }
 
-    const systemChange = (id) => {
+    const selectedSystemChange = id => {
         setSelectedSystem(id)
         if (systems.length !== 0) setPrivileges(systems[systems.indexOf(systems.find(system => system.id === id))].privileges)
         setSelectedPrivileges([])
     }
 
-    const privilegeChange = (key) => {
+    const privilegeChange = key => {
         if (selectedPrivileges.indexOf(privileges[key].id) !== -1) {
             let a = [...selectedPrivileges]
             a.splice(selectedPrivileges.indexOf(privileges[key].id), 1)
@@ -313,7 +313,7 @@ export default function CreateRequest() {
                                 <GazpromRadio
                                     className={classes.check}
                                     checked={(system.id === selectedSystem)}
-                                    onChange={() => systemChange(system.id)}/>}
+                                    onChange={() => selectedSystemChange(system.id)}/>}
                             label={<Typography className={classes.littleText}>{system.title}</Typography>}
                         />
                     )}
@@ -385,8 +385,6 @@ export default function CreateRequest() {
                     </GazpromButton>
                 </DialogActions>
             </Dialog>
-
-
         </Container>
     )
 }

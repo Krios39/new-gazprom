@@ -28,13 +28,27 @@ const useStyles = makeStyles((theme) => ({
         overflow: "hidden",
         textOverflow: "ellipsis"
     },
-
+    item1: {
+        minWidth: 270
+    },
+    item2: {
+        minWidth: 160
+    },
+    item3: {
+        minWidth: 80
+    }
 }))
 
-export default function RequestListTableCell({cellItem, columnWidths, admin}) {
+export default function RequestListTableCell({cellItem, columns, admin}) {
     const classes = useStyles()
 
     const history = useHistory()
+
+    const getWidth = (key) => {
+        if (key === 0) return classes.item1
+        else if (key === columns - 1) return classes.item3
+        else return classes.item2
+    }
 
     const onRequestClick = (requestId) => {
         if (admin) {
@@ -50,7 +64,7 @@ export default function RequestListTableCell({cellItem, columnWidths, admin}) {
             justify="space-around"
             alignItems="center"
             wrap="nowrap"
-            spacing={2}
+
             onClick={() => onRequestClick(cellItem[0])}
         >
             {cellItem.map((item1, key) =>
@@ -58,16 +72,15 @@ export default function RequestListTableCell({cellItem, columnWidths, admin}) {
                 <Grid key={key}
                       wrap="nowrap"
                       item
-                      xs={columnWidths[key - 1].xs}
                       container justify="center"
+                      className={getWidth(key - 1)}
                 >
                     {(Array.isArray(item1)) ?
                         <Grid container direction="column" alignItems="center">
                             {item1.map((privilege, key2) =>
                                 <Grid key={key2}
                                       item
-                                      xs
-                                      zeroMinWidth>
+                                >
                                     <Tooltip key={key2} title={privilege.title}>
                                         <Typography component={'span'} noWrap className={classes.date}>
                                             <Box

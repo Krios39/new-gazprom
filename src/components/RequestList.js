@@ -40,7 +40,7 @@ export default function RequestList({title, data, searchPanel, privileges, expir
 
     const [requestOpen, setRequestOpen] = useState(false)
 
-    const [columnWidths, setColumnWidths] = useState([])
+    const [columns, setColumns] = useState(0)
 
     const {requestId} = useParams()
 
@@ -78,19 +78,16 @@ export default function RequestList({title, data, searchPanel, privileges, expir
 
     useEffect(() => {
         let a = []
-        let b = []
+
         const makeTableTitle = () => {
             a.push("Информационная система")
             if (privileges) a.push("Привелегии")
             a.push("Дата подачи")
             if (expiryDate) a.push("Дата выдачи")
             if (status) a.push("Статус")
-            if (a.length === 3) b = [{xs: 6}, {xs: 'auto'}, {xs: 'auto'}]
-            if (a.length === 4) b = [{xs: 5}, {xs: 'auto'}, {xs: 'auto'}, {xs: 'auto'}]
-            if (a.length === 5) b = [{xs: 4}, {xs: 'auto'}, {xs: 'auto'}, {xs: 'auto'}, {xs: 'auto'}]
         }
         makeTableTitle()
-        setColumnWidths(b)
+        setColumns(a.length)
         setSortCategories(a)
     }, [expiryDate, privileges, status])
 
@@ -146,7 +143,7 @@ export default function RequestList({title, data, searchPanel, privileges, expir
 
     return (
         <Box mx={2} className={classes.requestBox}>
-            {searchPanel && <GazpromFilterPanel admin={admin}/>}
+            {searchPanel && <GazpromFilterPanel  admin={admin}/>}
             <Box className={classes.requestFullWidth}>
                 <RequestListSortPanel
                     title={title}
@@ -156,9 +153,9 @@ export default function RequestList({title, data, searchPanel, privileges, expir
                     sortCategories={sortCategories}
                     sortOrder={sortOrder}/>
                 <Box className={classes.table}>
-                    <RequestListTableTitle sortCategories={sortCategories} columnWidths={columnWidths}/>
+                    <RequestListTableTitle sortCategories={sortCategories} columns={columns}/>
                     {newRequest.map((cellItem, key) =>
-                        <RequestListTableCell key={key} columnWidths={columnWidths} cellItem={cellItem} admin={admin}/>
+                        <RequestListTableCell key={key}  columns={columns} cellItem={cellItem} admin={admin}/>
                     )}
                 </Box>
             </Box>

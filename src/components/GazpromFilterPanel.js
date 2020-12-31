@@ -1,14 +1,27 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import Box from "@material-ui/core/Box";
-import {Typography} from "@material-ui/core";
-import {SmallGazpromTextField} from "./GazpromTextField";
+import {Button, Typography} from "@material-ui/core";
+import GazpromTextFieldWithTitle from "./GazpromTextField";
 import FormControl from "@material-ui/core/FormControl";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import GazpromDatePicker from "./GazpromDatePicker";
 import {GazpromButton} from "./GazpromButton";
-import {makeStyles} from "@material-ui/core/styles";
+import {makeStyles, withStyles} from "@material-ui/core/styles";
 import {GazpromCheckbox} from "./GazpromCheckbox";
+
+export const NotActiveButton = withStyles({
+    root: {
+        border: '1px solid #D9D9D9',
+        textTransform: 'none',
+        backgroundColor: '#fff',
+        '&:hover': {
+            color: "#fff",
+            backgroundColor: '#0079C2',
+            border: '1px solid #0079C2',
+        }
+    }
+})(Button)
 
 const useStyles = makeStyles(() => ({
     panelBox: {
@@ -37,6 +50,7 @@ const useStyles = makeStyles(() => ({
 export default function GazpromFilterPanel({admin}) {
     const classes = useStyles()
 
+    const [search, setSearch] = useState("")
     const [fillingDateStart, setFillingDateStart] = useState()
     const [fillingDateEnd, setFillingDateEnd] = useState()
     const [expiryDateStart, setExpiryDateStart] = useState()
@@ -46,28 +60,18 @@ export default function GazpromFilterPanel({admin}) {
         ENABLED: false,
         DISABLED: false,
         SHIPPED: false,
-        REFUSED:false
+        REFUSED: false
     });
 
     const handleChange = (event) => {
         setState({...state, [event.target.name]: event.target.checked});
     };
 
-    const {active, notActive, rejected, submitted} = state;
-
-    useEffect(()=>{
-        console.log(state)
-    },[state])
-
     return (
         <Box className={classes.panelBox}>
             <Box>
                 <Typography className={classes.labelText}>Инф система</Typography>
-                <SmallGazpromTextField
-                    className={classes.margin}
-                    size="small"
-                    variant="outlined"
-                />
+                <GazpromTextFieldWithTitle className={classes.margin} value={search} onChange={setSearch} small/>
             </Box>
             {!admin && <Box>
                 <Typography className={classes.labelText}>Статус заявки</Typography>
@@ -76,25 +80,25 @@ export default function GazpromFilterPanel({admin}) {
                     <FormGroup>
                         <FormControlLabel
                             className={classes.checkBox}
-                            control={<GazpromCheckbox checked={active} onChange={handleChange} name="ENABLED"/>}
+                            control={<GazpromCheckbox checked={state.ENABLED} onChange={handleChange} name="ENABLED"/>}
                             label={<Typography className={classes.littleText}>Активна</Typography>}
                         />
                         <FormControlLabel
                             className={classes.checkBox}
                             control={<GazpromCheckbox
-                                checked={notActive}
+                                checked={state.DISABLED}
                                 onChange={handleChange}
                                 name="DISABLED"/>}
                             label={<Typography className={classes.littleText}>Не активна</Typography>}
                         />
                         <FormControlLabel
                             className={classes.checkBox}
-                            control={<GazpromCheckbox checked={rejected} onChange={handleChange} name="REFUSED"/>}
+                            control={<GazpromCheckbox checked={state.REFUSED} onChange={handleChange} name="REFUSED"/>}
                             label={<Typography className={classes.littleText}>Отклонена</Typography>}
                         />
                         <FormControlLabel
                             className={classes.checkBox}
-                            control={<GazpromCheckbox checked={submitted} onChange={handleChange} name="SHIPPED"/>}
+                            control={<GazpromCheckbox checked={state.SHIPPED} onChange={handleChange} name="SHIPPED"/>}
                             label={<Typography className={classes.littleText}>Отправлена</Typography>}
                         />
                     </FormGroup>
@@ -107,24 +111,31 @@ export default function GazpromFilterPanel({admin}) {
                 <GazpromDatePicker className={classes.margin} size={"small"} value={fillingDateStart}
                                    onChange={setFillingDateStart}/>
                 <GazpromDatePicker className={classes.margin} size={"small"} value={fillingDateEnd}
-                                   onChange={setFillingDateEnd} placeholder="Напишите причину отклонения заявки..." />
+                                   onChange={setFillingDateEnd} placeholder="Напишите причину отклонения заявки..."/>
             </Box>
 
             {!admin && <Box>
                 <Typography className={classes.labelText}>Дата выдачи</Typography>
                 <GazpromDatePicker className={classes.margin} size={"small"} value={expiryDateStart}
-                                   onChange={setExpiryDateStart}  placeholder="Напишите причину отклонения заявки..."/>
+                                   onChange={setExpiryDateStart} placeholder="Напишите причину отклонения заявки..."/>
                 <GazpromDatePicker className={classes.margin} size={"small"} value={expiryDateEnd}
                                    onChange={setExpiryDateEnd}/>
             </Box>}
 
             <GazpromButton
+                className={classes.margin}
                 fullWidth
                 variant="contained"
-                color="primary">
-                Найти
+                color="primary"
+            >
+                Применить
             </GazpromButton>
-
+            <NotActiveButton
+                fullWidth
+                variant="contained"
+            >
+                Отменить
+            </NotActiveButton>
         </Box>
     )
 }

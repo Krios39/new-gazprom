@@ -28,11 +28,26 @@ const useStyles = makeStyles((theme) => ({
     listLabel: {
         color: "#0079C2",
         fontWeight: 600,
+    },
+    item1: {
+        minWidth: 270
+    },
+    item2: {
+        minWidth: 160
+    },
+    item3: {
+        minWidth: 80
     }
 }))
 
-export default function RequestListTableTitle({sortCategories, columnWidths}) {
+export default function RequestListTableTitle({sortCategories, columns}) {
     const classes = useStyles()
+
+    const getWidth = (key) => {
+        if (key === 0) return classes.item1
+        else if (key === columns - 1) return classes.item3
+        else return classes.item2
+    }
 
     return (
         <Grid container
@@ -41,15 +56,15 @@ export default function RequestListTableTitle({sortCategories, columnWidths}) {
               direction="row"
               justify="space-around"
               alignItems="center"
-              spacing={2}
+
         >
             {sortCategories.map((category, key) =>
                 <Grid key={key}
                       wrap="nowrap"
                       item
-                      xs={columnWidths[key].xs}
                       container
                       justify="center"
+                      className={getWidth(key)}
                 >
                     <Typography
                         component={'span'}
