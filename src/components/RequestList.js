@@ -7,6 +7,7 @@ import GazpromFilterPanel from "./GazpromFilterPanel";
 import RequestListSortPanel from "./RequestListSortPanel";
 import RequestListTableTitle from "./RequestListTableTitle";
 import RequestListTableCell from "./RequestListTableCell";
+import {format,getSeconds} from 'date-fns'
 
 const useStyles = makeStyles((theme) => ({
     table: {
@@ -92,31 +93,32 @@ export default function RequestList({title, data, searchPanel, privileges, expir
     }, [expiryDate, privileges, status])
 
 
+    useEffect(()=>{
+        setNewRequest([...newRequest].reverse())
+    },[sortOrder])
+
     useEffect(() => {
         const tableSort = () => {
             const arr = [...newRequest]
             const categoryName = sortCategories[selectSortCategory]
 
             if (categoryName === "Дата выдачи" || categoryName === "Дата подачи") arr.sort((a, b) => {
-                    const parts1 = a[selectSortCategory].split('.');
-                    const parts2 = b[selectSortCategory].split('.');
-                    const date1 = new Date(parts1[2], parts1[1] - 1, parts1[0]);
-                    const date2 = new Date(parts2[2], parts2[1] - 1, parts2[0]);
-                    return date1 > date2 ? 1 : -1
+                    return getSeconds( stringToDate(a[selectSortCategory+1])) - getSeconds( stringToDate(b[selectSortCategory+1]))
                 }
             )
             else arr.sort((a, b) => a[selectSortCategory] > b[selectSortCategory] ? 1 : -1)
-            if (arr.length !== 0) sortOrder === 10 ? setNewRequest(arr) : setNewRequest(arr.reverse())
         }
         tableSort()
     }, [selectSortCategory, sortOrder])
 
     const dateToString = date => {
         if (date.year === 1) return "-"
-        const day = date.day
-        const month = date.month + 1
-        const year = date.year + 1900
-        return `${day}.${month}.${year}`
+        return  format(new Date(date.year+1900,date.month,date.day),'dd.MM.yyyy')
+    }
+
+    const stringToDate=string=>{
+
+        return new Date(string.slice(6),Number(string.slice(3,5))-1,string.slice(0,2))
     }
 
     const getStatus = status => {
