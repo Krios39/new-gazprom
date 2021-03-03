@@ -7,6 +7,7 @@ import {ADMIN_AGREE, ADMIN_DISAGREE, BASE_URL, OWNER_AGREE, OWNER_DISAGREE, REQU
 import {accessTokenContext, roleContext} from "../../../App";
 import clsx from "clsx";
 import {GazpromTextField} from "../../../components/GazpromTextField";
+import {format} from "date-fns";
 
 const AgreeButton = withStyles({
     root: {
@@ -177,11 +178,7 @@ export default function Request({open}) {
     }
 
     const dateToString = date => {
-        if (date.year === 1) return "-"
-        const day = date.day
-        const month = date.month
-        const year = date.year + 1900
-        return `${day}.${month}.${year}`
+        return  format(new Date(date.year+1900,date.month,date.day),'dd.MM.yyyy')
     }
 
     const setData = data => {
@@ -198,7 +195,6 @@ export default function Request({open}) {
 
     const sendConsent = () => {
         const adminOrOwner = role === "owner" ? adminConsent ? OWNER_AGREE : OWNER_DISAGREE : adminConsent ? ADMIN_AGREE : ADMIN_DISAGREE
-        console.log(adminOrOwner)
         axios.get(BASE_URL + adminOrOwner, {
             headers: {
                 "Content-Type": "application/json",
@@ -211,7 +207,7 @@ export default function Request({open}) {
             }
         })
             .then(resp => {
-                console.log(resp)
+
             }).catch(e => {
             if (e.response.status === 401) history.push('/authorization')
         })

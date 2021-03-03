@@ -61,9 +61,9 @@ export default function RequestList({title, data, searchPanel, privileges, expir
                 c.push(request.idRequest)
                 c.push(request.system)
                 if (privileges) c.push(request.privileges)
-                if (expiryDate) if (request.expiryDate) c.push(dateToString(request.fillingDate))
+                if (expiryDate) if (request.expiryDate) c.push(dateToString(request.expiryDate))
                 else c.push(dateToString("Бессрочно"))
-                c.push(dateToString(request.expiryDate))
+                c.push(dateToString(request.fillingDate))
                 if (status) c.push(getStatus(request.status))
                 a.push(c)
                 return a
@@ -101,7 +101,6 @@ export default function RequestList({title, data, searchPanel, privileges, expir
         const tableSort = () => {
             const arr = [...newRequest]
             const categoryName = sortCategories[selectSortCategory]
-
             if (categoryName === "Дата выдачи" || categoryName === "Дата подачи") arr.sort((a, b) => {
                     return getSeconds( stringToDate(a[selectSortCategory+1])) - getSeconds( stringToDate(b[selectSortCategory+1]))
                 }
@@ -112,12 +111,10 @@ export default function RequestList({title, data, searchPanel, privileges, expir
     }, [selectSortCategory, sortOrder])
 
     const dateToString = date => {
-        if (date.year === 1) return "-"
         return  format(new Date(date.year+1900,date.month,date.day),'dd.MM.yyyy')
     }
 
     const stringToDate=string=>{
-
         return new Date(string.slice(6),Number(string.slice(3,5))-1,string.slice(0,2))
     }
 

@@ -198,7 +198,6 @@ export default function WorkerRegistration() {
             }
         }).then(resp => {
             setRegistrationLoading(false)
-            console.log(resp)
         }).catch(e => {
             setRegistrationLoading(false)
             if (e.response.status === 401) history.push('/authorization')
@@ -218,7 +217,6 @@ export default function WorkerRegistration() {
                 "Authorization": "Bearer " + accessToken
             }
         }).then(resp => {
-            console.log(resp)
             setUserName("user" + (resp.data[resp.data.length - 1].userId + 1))
         })
     }
