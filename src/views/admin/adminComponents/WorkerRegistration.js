@@ -189,8 +189,9 @@ export default function WorkerRegistration() {
             middleName: middleName,
             email: "devbybelousov@yandex.ru",
             departmentId: departments.find(departments => departments.id === selectedDepartment).id,
-            role: 0
+            role: 2
         }
+        console.log(request)
         axios.post(BASE_URL + ADD_USER, request, {
             headers: {
                 "Content-Type": "application/json",

@@ -45,11 +45,12 @@ export default function UserInformationPanel({full}) {
                 "Authorization": "Bearer " + accessToken
             },
             params: {
-                userId: params.userId
+                id: params.userId
             }
         }
         axios.get(BASE_URL + USER_INFORMATION, request)
             .then(response => {
+                console.log(response.data.department.title)
                 setUserInfo(response.data)
             })
             .catch(e => {
@@ -62,7 +63,7 @@ export default function UserInformationPanel({full}) {
             <Typography className={classes.mainText}>{clsx([userInfo.lastName,userInfo.name,userInfo.middleName])}</Typography>
             {full &&
             <Box>
-                <Typography className={classes.text}>Подразделение: {userInfo.department}</Typography>
+                <Typography className={classes.text}>Подразделение: {userInfo.department?userInfo.department.title:''}</Typography>
                 <Typography className={classes.text}>Почта: {userInfo.email}</Typography>
             </Box>
             }

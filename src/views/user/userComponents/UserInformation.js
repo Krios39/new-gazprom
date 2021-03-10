@@ -4,7 +4,7 @@ import RequestList from "../../../components/RequestList";
 import React, {useContext, useEffect, useState} from "react";
 import {accessTokenContext} from "../../../App";
 import axios from "axios"
-import {ACTIVE_REQUESTS, BASE_URL} from "../../../constants/Urls";
+import {REQUESTS, BASE_URL} from "../../../constants/Urls";
 import {useHistory, useParams} from "react-router";
 
 export default function UserInformation() {
@@ -17,17 +17,20 @@ export default function UserInformation() {
     const history = useHistory()
 
     useEffect(() => {
-        axios.get(BASE_URL + ACTIVE_REQUESTS, {
+        axios.get(BASE_URL + REQUESTS, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": "Bearer " + accessToken
             },
             params: {
-                userId: params.userId
+                userId: params.userId,
+                filter:1,
+                status:'STATUS_ENABLE'
             }
         })
             .then(resp => {
                 setData(resp.data)
+
             })
             .catch(e => {
                 if (e.response.status === 401) history.push('/authorization')

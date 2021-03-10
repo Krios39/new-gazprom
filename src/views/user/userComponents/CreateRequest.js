@@ -106,6 +106,7 @@ export default function CreateRequest() {
 
         axios.get(BASE_URL + ALL_SYSTEMS, request)
             .then(resp => {
+
                 setSystems(resp.data)
             })
             .catch(error => {
@@ -115,10 +116,12 @@ export default function CreateRequest() {
 
         axios.get(BASE_URL + ALL_USERS, request)
             .then(resp => {
+                console.log(resp.data)
                 workerSelfException(resp.data)
             })
             .catch(error => {
-                if (error.response.status === 401) history.push('/authorization')
+                // console.log(error)
+                // if (error.response.status === 401) history.push('/authorization')
                 //if (error.response.status === 500) handleOpen("Ошибка сервера")
             })
     }, [])
@@ -148,7 +151,7 @@ export default function CreateRequest() {
     const workerSelfException = (data) => {
         let a = [...data]
         data.map(user => {
-            if (user.userId.toString() === userId) {
+            if (user.id.toString() === userId) {
                 a.splice(a.indexOf(user), 1)
             }
             return a
@@ -171,11 +174,12 @@ export default function CreateRequest() {
     }
 
     const workerSelectChange = (worker) => {
-        if (selectedWorkers.indexOf(worker.userId) !== -1) {
+        console.log(worker)
+        if (selectedWorkers.indexOf(worker.id) !== -1) {
             let a = [...selectedWorkers]
-            a.splice(selectedWorkers.indexOf(worker.userId), 1)
+            a.splice(selectedWorkers.indexOf(worker.id), 1)
             setSelectedWorkers(a)
-        } else setSelectedWorkers(prevState => [...prevState, worker.userId])
+        } else setSelectedWorkers(prevState => [...prevState, worker.id])
     }
 
     const handleKeyPress = (event) => {
@@ -367,7 +371,7 @@ export default function CreateRequest() {
                             <ListItem key={key} dense button onClick={() => workerSelectChange(worker)}>
                                 <ListItemIcon>
                                     <GazpromCheckbox
-                                        checked={(selectedWorkers.indexOf(worker.userId) > -1)}
+                                        checked={(selectedWorkers.indexOf(worker.id) > -1)}
                                     />
                                 </ListItemIcon>
                                 <ListItemText primary={clsx(worker.lastName, worker.name, worker.middleName)}/>

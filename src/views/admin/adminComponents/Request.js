@@ -3,7 +3,7 @@ import {useHistory, useParams} from "react-router";
 import {Button, CircularProgress, Grid, makeStyles, Typography, Dialog, Tooltip, Paper, Box} from "@material-ui/core";
 import {withStyles} from "@material-ui/core/styles";
 import axios from "axios"
-import {ADMIN_AGREE, ADMIN_DISAGREE, BASE_URL, OWNER_AGREE, OWNER_DISAGREE, REQUEST} from "../../../constants/Urls";
+import {ADMIN_AGREE, ADMIN_DISAGREE, BASE_URL, OWNER_AGREE, OWNER_DISAGREE, REQUESTS} from "../../../constants/Urls";
 import {accessTokenContext, roleContext} from "../../../App";
 import clsx from "clsx";
 import {GazpromTextField} from "../../../components/GazpromTextField";
@@ -152,7 +152,7 @@ export default function Request({open}) {
     const history = useHistory()
 
     useEffect(() => {
-        if (open) axios.get(BASE_URL + REQUEST, {
+        if (open) axios.get(BASE_URL + REQUESTS, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": "Bearer " + accessToken

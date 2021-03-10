@@ -4,7 +4,7 @@ import RequestList from "../../../components/RequestList";
 import UserInformationPanel from "./UserInformationPanel";
 import {makeStyles} from "@material-ui/core/styles";
 import axios from "axios"
-import {ALL_USERS_REQUESTS, BASE_URL} from "../../../constants/Urls";
+import {ALL_USERS_REQUESTS, BASE_URL, REQUESTS} from "../../../constants/Urls";
 import {accessTokenContext} from "../../../App";
 import {useHistory, useParams} from "react-router";
 
@@ -17,13 +17,14 @@ export default function UserArchive() {
 
 
     useEffect(() => {
-        axios.get(BASE_URL + ALL_USERS_REQUESTS, {
+        axios.get(BASE_URL + REQUESTS, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + accessToken
             },
             params: {
-                userId: userId
+                userId: userId,
+                filter:0
             }
         })
             .then((resp) => {
